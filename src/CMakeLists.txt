@@ -17,6 +17,9 @@ add_executable(rap
     loadsave.c
     help.c
     windows.c
+
+    gfx/gfxapi.c
+    gfx/swdapi.c
 )
 
 target_link_libraries(rap PRIVATE SDL2)
