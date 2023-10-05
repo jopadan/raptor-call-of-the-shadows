@@ -81,4 +81,6 @@ int outp(
    int data_byte
 );
 
+void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)());
+
 #endif
