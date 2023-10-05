@@ -18,10 +18,12 @@ add_executable(rap
     help.c
     windows.c
 
+    gfx/exitapi.c
+    gfx/glbapi.c
     gfx/gfxapi.c
     gfx/swdapi.c
 )
 
 target_link_libraries(rap PRIVATE SDL2)
-target_compile_definitions(rap PRIVATE -D__cdecl= )
+target_compile_definitions(rap PRIVATE -D__cdecl= -Dstrcmpi=strcasecmp)
 target_include_directories(rap PRIVATE dos gfx apodmx)

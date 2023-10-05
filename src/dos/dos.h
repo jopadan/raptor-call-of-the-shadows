@@ -2,6 +2,10 @@
 #define DOS_DOS_H__
 
 #include <string.h>
+#include <errno.h>
+
+#include <limits.h>
+#define _MAX_PATH PATH_MAX
 
 struct DWORDREGS {
   unsigned long edi;
@@ -76,7 +80,5 @@ int outp(
    unsigned short port,
    int data_byte
 );
-
-#define strcmpi strcasecmp
 
 #endif
