@@ -23,6 +23,7 @@ add_executable(rap
     gfx/glbapi.c
     gfx/gfxapi.c
     gfx/kbdapi.c
+    gfx/prefapi.c
     gfx/ptrapi.c
     gfx/swdapi.c
     gfx/vmemapi.c

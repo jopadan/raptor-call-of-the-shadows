@@ -52,6 +52,15 @@ void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)()) {
     printf("DOSSETVECT %u\n", intnum);
 }
 
+//GFX
+
+VOID  
+PTR_ReadJoyStick (
+VOID
+) {
+    printf("PTR_ReadJoyStick\n");
+}
+
 //TSM
 
 void TSM_Install(int rate) {
@@ -71,16 +80,6 @@ void TSM_PauseService(int id) {
 }
 void TSM_ResumeService(int id) {
     printf("TSM_ResumeService %d\n", id);
-}
-
-// PTR part
-
-void PTR_End(void) {
-    printf("PTR_End\n");
-}
-
-void PTR_SetPos(INT x, INT y) {
-    printf("PTR_SetPos %d %d\n", x, y);
 }
 
 // TILE
