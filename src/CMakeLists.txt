@@ -36,5 +36,5 @@ add_executable(rap
 )
 
 target_link_libraries(rap PRIVATE SDL2)
-target_compile_definitions(rap PRIVATE -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl= -Dstrcmpi=strcasecmp -Dstricmp=strcasecmp)
+target_compile_definitions(rap PRIVATE -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl= -Dstricmp=strcmpi)
 target_include_directories(rap PRIVATE dos gfx apodmx)

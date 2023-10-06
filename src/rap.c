@@ -229,12 +229,13 @@ InitScreen (
 VOID
 )
 {
+   CHAR  *  msg = " RAPTOR: Call Of The Shadows V1.2                        (c)1994 Cygnus Studios";
+#if 0
    union  REGS   regs;
    BYTE * scradr = (BYTE *)0xB8000;
    INT    loop;
    BYTE   color;
    INT    port = 0x3c8;
-   CHAR  *  msg = " RAPTOR: Call Of The Shadows V1.2                        (c)1994 Cygnus Studios";
 
    regs.w.ax = 0x3;
    int386(0x10,(const union REGS *) &regs, &regs);
@@ -264,8 +265,9 @@ VOID
          msg++;
       }
    }
+#endif
 
-   printf ("\n");
+   printf ("%s\n", msg);
 }
 
 /*==========================================================================
@@ -277,7 +279,9 @@ INT   errcode
 )
 {
    union    REGS   regs;
+#if 0
    volatile BYTE * scradr = (VOID *)0xB8000;
+#endif
    volatile BYTE * mem;
    volatile int    loop;
    volatile int    cnt  = 0;
@@ -311,6 +315,7 @@ INT   errcode
          mem = GLB_LockItem ( LASTSCR3_TXT );
       #endif
 
+#if 0
       for ( loop = 0; loop < (4000-(160*2)); loop++ )
       {
          *scradr = *mem;
@@ -322,6 +327,7 @@ INT   errcode
             cnt++;
          }
       }
+#endif
 
       if ( reg_flag )
          GLB_FreeItem ( LASTSCR2_TXT );

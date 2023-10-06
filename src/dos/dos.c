@@ -54,12 +54,31 @@ void _enable(void) {}
 int int386( int inter_no,
             const union REGS *in_regs,
             union REGS *out_regs ) {
-    printf("INT386 %u\n", inter_no);
-    abort();
+    printf("INT386 %02x ah=%02x\n", inter_no, in_regs->h.ah);
+    *out_regs = *in_regs;
+    switch(inter_no)
+    {
+        case 0x10:
+            switch(in_regs->h.ah)
+            {
+                case 0x00:
+                    printf("int 0x10: SetVideoMode 0x%02x\n", in_regs->h.al);
+                    break;
+                case 0x02:
+                    printf("int 0x10: SetCursorPosition %u %u %u\n", in_regs->h.bh, in_regs->h.dh, in_regs->h.dl);
+                    break;
+                default:
+                    abort();
+            }
+            break;
+        default:
+            abort();
+    }
+    return out_regs->x.eax;
 }
 
 int inp(unsigned short port) {
-    printf("INP %u\n", port);
+    printf("INP %04x\n", port);
     return 0;
 }
 
@@ -67,7 +86,7 @@ int outp(
    unsigned short port,
    int data_byte
 ) {
-    printf("OUTP %u %d\n", port, data_byte);
+    printf("OUTP %04x %d\n", port, data_byte);
     return data_byte;
 }
 
@@ -78,6 +97,17 @@ void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)()) {
 void (__cdecl _interrupt _far *_dos_getvect(unsigned intnum))() {
     printf("_dos_getvect %u\n", intnum);
     return NULL;
+}
+
+int strcmpi(const char *str1, const char *str2) {
+    if (str1) {
+        if (str2)
+            return strcasecmp(str1, str2);
+        else
+            return 1;
+    } else {
+        return -1;
+    }
 }
 
 char * strupr(char * str) {
