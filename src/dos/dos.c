@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include "types.h"
 
+int _dpmi_dosalloc(unsigned short size, unsigned int *segment) {
+    return 0;
+}
+int _dpmi_getmemsize(void) {
+    return 4096 * 1024;
+}
+
 void _dos_getdate( struct dosdate_t *date ) {
     time_t t = 0;
     struct tm tm;
@@ -45,27 +52,41 @@ void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)()) {
     printf("DOSSETVECT %u\n", intnum);
 }
 
-//GFX PART
-PUBLIC INT     cur_mx         = 0;
-PUBLIC INT     cur_my         = 0;
-PUBLIC INT     mouseb1        = 0;
-PUBLIC INT     mouseb2        = 0;
+//TSM
 
-PUBLIC BOOL    mouse_b1_ack   = FALSE;
-PUBLIC BOOL    mouse_b2_ack   = FALSE;
-PUBLIC BOOL    mouse_b3_ack   = FALSE;
+void TSM_Install(int rate) {
+    printf("TSM_Install %d\n", rate);
+}
+int TSM_NewService(void(*function)(void), int rate, int priority, int pause) {
+    printf("TSM_NewService %d %d %d\n", rate, priority, rate);
+}
+void TSM_DelService(int id) {
+    printf("TSM_DelService %d\n", id);
+}
+void TSM_Remove(void) {
+    printf("TSM_Remove\n");
+}
+void TSM_PauseService(int id) {
+    printf("TSM_PauseService %d\n", id);
+}
+void TSM_ResumeService(int id) {
+    printf("TSM_ResumeService %d\n", id);
+}
 
-PUBLIC  BOOL   ptr_init_flag  = FALSE;
+// PTR part
 
+void PTR_End(void) {
+    printf("PTR_End\n");
+}
 
-PUBLIC  INT    joy_limit_xh   = 10;
-PUBLIC  INT    joy_limit_xl   = -10;
-PUBLIC  INT    joy_limit_yh   = 10;
-PUBLIC  INT    joy_limit_yl   = -10;
+void PTR_SetPos(INT x, INT y) {
+    printf("PTR_SetPos %d %d\n", x, y);
+}
 
-PUBLIC  INT    joy_x          = 0;
-PUBLIC  INT    joy_y          = 0;
-PUBLIC  INT    joy_sx         = 0;
-PUBLIC  INT    joy_sy         = 0;
-
-PUBLIC  INT    joy_buttons    = 0;
+// TILE
+void TILE_ShakeScreen() {
+    printf("TILE_ShakeScreen\n");
+}
+void TILE_DisplayScreen() {
+    printf("TILE_ShakeScreen\n");
+}

@@ -52,9 +52,18 @@ struct BYTEREGS {
 };
 
 union REGS {
-  struct DWORDREGS d;
+  struct DWORDREGS x;
   struct WORDREGS w;
   struct BYTEREGS h;
+};
+
+struct SREGS {
+  unsigned short es;
+  unsigned short ds;
+  unsigned short fs;
+  unsigned short gs;
+  unsigned short cs;
+  unsigned short ss;
 };
 
 struct dosdate_t

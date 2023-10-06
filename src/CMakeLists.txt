@@ -23,6 +23,7 @@ add_executable(rap
     gfx/glbapi.c
     gfx/gfxapi.c
     gfx/kbdapi.c
+    gfx/ptrapi.c
     gfx/swdapi.c
     gfx/vmemapi.c
 
@@ -33,5 +34,5 @@ add_executable(rap
 )
 
 target_link_libraries(rap PRIVATE SDL2)
-target_compile_definitions(rap PRIVATE -D_far= -D_interrupt= -D__cdecl= -Dcdecl= -Dstrcmpi=strcasecmp)
+target_compile_definitions(rap PRIVATE -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl= -Dstrcmpi=strcasecmp)
 target_include_directories(rap PRIVATE dos gfx apodmx)
