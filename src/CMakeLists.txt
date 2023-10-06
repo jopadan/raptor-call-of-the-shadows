@@ -26,9 +26,12 @@ add_executable(rap
     gfx/swdapi.c
     gfx/vmemapi.c
 
+    apodmx/dmx.c
+    apodmx/mus2mid.c
+
     dos/dos.c
 )
 
 target_link_libraries(rap PRIVATE SDL2)
-target_compile_definitions(rap PRIVATE -D_far= -D_interrupt= -D__cdecl= -Dstrcmpi=strcasecmp)
+target_compile_definitions(rap PRIVATE -D_far= -D_interrupt= -D__cdecl= -Dcdecl= -Dstrcmpi=strcasecmp)
 target_include_directories(rap PRIVATE dos gfx apodmx)

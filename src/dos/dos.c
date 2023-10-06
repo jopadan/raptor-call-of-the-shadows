@@ -42,7 +42,7 @@ int outp(
 }
 
 void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)()) {
-    printf("DOSSETVECT %u\n");
+    printf("DOSSETVECT %u\n", intnum);
 }
 
 //GFX PART
@@ -65,4 +65,7 @@ PUBLIC  INT    joy_limit_yl   = -10;
 
 PUBLIC  INT    joy_x          = 0;
 PUBLIC  INT    joy_y          = 0;
+PUBLIC  INT    joy_sx         = 0;
+PUBLIC  INT    joy_sy         = 0;
+
 PUBLIC  INT    joy_buttons    = 0;
