@@ -19,10 +19,14 @@ add_executable(rap
     windows.c
 
     gfx/exitapi.c
+    gfx/imsapi.c
     gfx/glbapi.c
     gfx/gfxapi.c
     gfx/kbdapi.c
     gfx/swdapi.c
+    gfx/vmemapi.c
+
+    dos/dos.c
 )
 
 target_link_libraries(rap PRIVATE SDL2)
