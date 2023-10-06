@@ -66,6 +66,8 @@ struct SREGS {
   unsigned short ss;
 };
 
+void segread(struct SREGS *segregs);
+
 struct dosdate_t
       {
       unsigned char day;        // - [1-31]
@@ -90,6 +92,10 @@ int outp(
    int data_byte
 );
 
+int chsize( int handle, long size );
+char * ltoa(long l, char * buffer, int radix);
+
 void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)());
+void (__cdecl _interrupt _far *_dos_getvect(unsigned intnum))();
 
 #endif
