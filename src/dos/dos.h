@@ -3,59 +3,60 @@
 
 #include <string.h>
 #include <errno.h>
+#include <stdint.h>
 
 #include <limits.h>
 #define _MAX_PATH PATH_MAX
 
 struct DWORDREGS {
-  unsigned long edi;
-  unsigned long esi;
-  unsigned long ebp;
-  unsigned long cflag;
-  unsigned long ebx;
-  unsigned long edx;
-  unsigned long ecx;
-  unsigned long eax;
+  uint32_t edi;
+  uint32_t esi;
+  uint32_t ebp;
+  uint32_t cflag;
+  uint32_t ebx;
+  uint32_t edx;
+  uint32_t ecx;
+  uint32_t eax;
   unsigned short eflags;
-};
+} __attribute__((packed));
 
 struct WORDREGS {
-  unsigned short di, _upper_di;
-  unsigned short si, _upper_si;
-  unsigned short bp, _upper_bp;
-  unsigned short cflag, _upper_cflag;
-  unsigned short bx, _upper_bx;
-  unsigned short dx, _upper_dx;
-  unsigned short cx, _upper_cx;
-  unsigned short ax, _upper_ax;
-  unsigned short flags;
-};
+  uint16_t di, _upper_di;
+  uint16_t si, _upper_si;
+  uint16_t bp, _upper_bp;
+  uint16_t cflag, _upper_cflag;
+  uint16_t bx, _upper_bx;
+  uint16_t dx, _upper_dx;
+  uint16_t cx, _upper_cx;
+  uint16_t ax, _upper_ax;
+  uint16_t flags;
+} __attribute__((packed));
 
 struct BYTEREGS {
-  unsigned short di, _upper_di;
-  unsigned short si, _upper_si;
-  unsigned short bp, _upper_bp;
-  unsigned long cflag;
-  unsigned char bl;
-  unsigned char bh;
-  unsigned short _upper_bx;
-  unsigned char dl;
-  unsigned char dh;
-  unsigned short _upper_dx;
-  unsigned char cl;
-  unsigned char ch;
-  unsigned short _upper_cx;
-  unsigned char al;
-  unsigned char ah;
-  unsigned short _upper_ax;
-  unsigned short flags;
-};
+  uint16_t di, _upper_di;
+  uint16_t si, _upper_si;
+  uint16_t bp, _upper_bp;
+  uint32_t cflag;
+  uint8_t bl;
+  uint8_t bh;
+  uint16_t _upper_bx;
+  uint8_t dl;
+  uint8_t dh;
+  uint16_t _upper_dx;
+  uint8_t cl;
+  uint8_t ch;
+  uint16_t _upper_cx;
+  uint8_t al;
+  uint8_t ah;
+  uint16_t _upper_ax;
+  uint16_t flags;
+} __attribute__((packed));
 
 union REGS {
   struct DWORDREGS x;
   struct WORDREGS w;
   struct BYTEREGS h;
-};
+} __attribute__((packed));
 
 struct SREGS {
   unsigned short es;
