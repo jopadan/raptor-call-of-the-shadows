@@ -676,7 +676,7 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
    union REGS   regs;
    int (far *function_ptr)();
    INT rval = 0;
-   DWORD segment;
+   uintptr_t segment;
 
    drawcursor = FALSE;
 

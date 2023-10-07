@@ -221,9 +221,9 @@ VOID
 {
    CHAR * err = "GFX_Init() - DosMemAlloc";
    INT   loop;
-   DWORD segment;
+   uintptr_t segment;
 
-   if ( _dpmi_dosalloc ( 4000, &segment ) ) EXIT_Error(err);
+   if ( _dpmi_dosalloc ( 64000, &segment ) ) EXIT_Error(err);
    displaybuffer = ( BYTE *)( segment<<4 );
 
    _dpmi_lockregion( displaybuffer, 64000 );

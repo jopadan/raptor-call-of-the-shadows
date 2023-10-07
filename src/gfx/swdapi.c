@@ -1366,7 +1366,7 @@ BOOL  moveflag             // INPUT : Use Move Window feature ( 64k )
 )
 {
    CHAR * err = "SWD_Init() - DosMemAlloc";
-   DWORD segment;
+   uintptr_t segment;
 
    g_key = 0;
    memset ( ( BYTE *)g_wins, 0, sizeof( g_wins ) );

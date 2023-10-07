@@ -1309,7 +1309,7 @@ RAP_InitMem (
 VOID
 )
 {
-   DWORD  segment;
+   uintptr_t  segment;
    DWORD  memsize;
    DWORD  lowmem     = 0;
    DWORD  getmem     = 38400;

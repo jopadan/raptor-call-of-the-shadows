@@ -31,13 +31,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef __DPMI_H
 #define __DPMI_H
 
+#include <stdint.h>
+
 /* These functions simply call DPMI_LockMemory and DPMI_UnlockMemory,
 respectively. They're used for compatibility with existing sources or
 object files that use any of the _dpmi_lockregion and _dpmi_unlockregion
 symbols, and would be incompatible if these were simply defined as macros. */
 int _dpmi_lockregion(void *address, unsigned length);
 int _dpmi_unlockregion(void *address, unsigned length);
-int _dpmi_dosalloc(unsigned short size, unsigned int *segment);
+int _dpmi_dosalloc(unsigned short size, uintptr_t *segment);
 int _dpmi_getmemsize(void);
 
 enum DPMI_Errors

@@ -11,9 +11,16 @@
 #include "music.h"
 
 #include <SDL2/SDL.h>
+#include <assert.h>
 
-int _dpmi_dosalloc(unsigned short size, unsigned int *segment) {
+int _dpmi_dosalloc(unsigned short size, uintptr_t *segment) {
     printf("_dpmi_dosalloc %u\n", size);
+    void * ptr = calloc(1, size);
+    if (!ptr)
+        return -1;
+    uintptr_t uptr = (uintptr_t)ptr;
+    assert((uptr & 0x0f) == 0);
+    *segment = uptr >> 4;
     return 0;
 }
 int _dpmi_getmemsize(void) {
