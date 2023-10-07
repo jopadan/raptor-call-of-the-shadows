@@ -1450,6 +1450,9 @@ main ( INT argc, CHAR * argv[] )
    volatile CHAR   * var1    = getenv("S_HOST");
    volatile BOOL     ptrflag = FALSE;
    volatile BYTE   * tptr;
+   CHAR emptyString[] = {0};
+   if (!var1)
+      var1 = emptyString;
 
    if ( argc >= 0 )
       InitScreen();

@@ -635,8 +635,11 @@ VOID
 {
    BYTE * var1;
    CHAR * n1 = "setup.ini";
+   BYTE emptyString[] = {0};
 
    var1 = getenv ( pogpath );
+   if (!var1)
+      var1 = emptyString;
 
    strncpy ( cdpath, var1, 32 );
 
