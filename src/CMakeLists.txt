@@ -27,6 +27,7 @@ add_executable(rap
     gfx/prefapi.c
     gfx/ptrapi.c
     gfx/swdapi.c
+    gfx/tsmapi.c
     gfx/vmemapi.c
 
     apodmx/dmx.c
