@@ -107,7 +107,7 @@ int int386( int inter_no,
                             printf("SDL_CreateRenderer: %s", SDL_GetError());
                             abort();
                         }
-                        sdl_surface = SDL_CreateRGBSurfaceWithFormat(0, 320, 200, 8, 0);
+                        sdl_surface = SDL_CreateRGBSurface(0, 320, 200, 8, 0, 0, 0, 0);
                         if (!sdl_surface) {
                             printf("SDL_CreateRGBSurfaceWithFormat: %s\n", SDL_GetError());
                             abort();
@@ -154,6 +154,20 @@ void _dos_update_screen() {
             break;
         }
     }
+    if (palette_updated) {
+        SDL_Color colors[256];
+        BYTE *src = palette;
+        for(unsigned i = 0; i != 256; ++i) {
+            SDL_Color *color = colors + i;
+            color->r = *src++;
+            color->g = *src++;
+            color->b = *src++;
+        }
+        if (SDL_SetPaletteColors(sdl_palette, colors, 0, 256)) {
+            printf("SDL_SetPaletteColors: %s\n", SDL_GetError());
+            abort();
+        }
+    }
     bool must_lock = SDL_MUSTLOCK(sdl_surface);
     if (must_lock) {
         if (SDL_LockSurface(sdl_surface) != 0) {
@@ -178,9 +192,8 @@ void _dos_update_screen() {
         printf("SDL_GetWindowSurface: %s\n", SDL_GetError());
         abort();
     }
-    SDL_Rect src_rect = {0, 0, 320, 200};
-    SDL_Rect dst_rect = {0, 0, 320, 200};
-    SDL_BlitSurface(sdl_surface, &src_rect, window_surface, &dst_rect);
+
+    SDL_BlitSurface(sdl_surface, NULL, window_surface, NULL);
 
     SDL_RenderPresent(sdl_renderer);
 }
