@@ -1,4 +1,4 @@
-add_executable(rap
+add_library(rapcore STATIC
     rap.c
     tile.c
     shots.c
@@ -32,10 +32,13 @@ add_executable(rap
 
     apodmx/dmx.c
     apodmx/mus2mid.c
+)
+target_include_directories(rapcore PUBLIC dos gfx apodmx)
+target_compile_definitions(rapcore PUBLIC -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl=)
+target_compile_definitions(rapcore PRIVATE -Dstricmp=strcmpi -Dmain=_dos_main -Dopen=_dos_open)
 
+add_executable(rap
     dos/dos.c
 )
 
-target_link_libraries(rap PRIVATE SDL2)
-target_compile_definitions(rap PRIVATE -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl= -Dstricmp=strcmpi)
-target_include_directories(rap PRIVATE dos gfx apodmx)
+target_link_libraries(rap PRIVATE rapcore SDL2)

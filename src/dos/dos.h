@@ -97,7 +97,7 @@ int outp(
 int chsize( int handle, long size );
 char * ltoa(long l, char * buffer, int radix);
 
-void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)());
-void (__cdecl _interrupt _far *_dos_getvect(unsigned intnum))();
+void _dos_setvect(unsigned intnum, void (*handler)());
+void (*_dos_getvect(unsigned intnum))();
 
 #endif

@@ -110,11 +110,11 @@ int outp(
     return data_byte;
 }
 
-void _dos_setvect(unsigned intnum, void (__cdecl _interrupt _far *handler)()) {
+void _dos_setvect(unsigned intnum, void (*handler)()) {
     printf("DOSSETVECT %u\n", intnum);
 }
 
-void (__cdecl _interrupt _far *_dos_getvect(unsigned intnum))() {
+void (*_dos_getvect(unsigned intnum))() {
     printf("_dos_getvect %u\n", intnum);
     return NULL;
 }
