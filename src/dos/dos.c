@@ -1,9 +1,13 @@
 #include "dos.h"
+#include <fcntl.h>
 #include <time.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include <unistd.h>
 #include "types.h"
 #include "pcfx.h"
@@ -481,4 +485,87 @@ int   FX_Shutdown( void ) {
 
 void  FX_SetVolume( int volume ) {
     printf("FX_SetVolume %d\n", volume);
+}
+
+extern int _dos_main(int argv, char **argc);
+
+static char * convert_path(const char *src) {
+    char *dst = strdup(src);
+    for(char *p = dst; *p; ++p) {
+        if (*p == '/')
+            *p = '\\';
+    }
+    return dst;
+}
+
+static char *resolve_path(const char *path) {
+    size_t p = 0;
+    size_t n = strlen(path);
+    char *dst = strdup(path);
+    while(p < n)
+    {
+        const char *next_ptr = strchr(path + p, '\\');
+        size_t next = next_ptr? next_ptr - path: n;
+        if (next < n)
+            dst[next] = 0;
+        if (next > p) {
+            if (access(dst, F_OK) != 0) {
+                char backup = dst[p];
+                dst[p] = 0;
+                DIR *dir = opendir(p != 0? dst: ".");
+                dst[p] = backup;
+                if (dir) {
+                    struct dirent *de;
+                    bool found = false;
+                    while((de = readdir(dir)) != NULL) {
+                        if (strcasecmp(dst + p, de->d_name) == 0) {
+                            strncpy(dst + p, de->d_name, strlen(de->d_name));
+                            found = true;
+                            break;
+                        }
+                    }
+                    closedir(dir);
+                    if (!found) {
+                        free(dst);
+                        return NULL;
+                    }
+                } else {
+                    free(dst);
+                    return NULL;
+                }
+            }
+        }
+        if (next < n)
+            dst[next] = '/';
+        p = next + 1;
+    }
+    return dst;
+}
+
+int _dos_open(const char *path, int mode) {
+    char *resolved = resolve_path(path);
+    if (!resolved) {
+        errno = ENOENT;
+        return -1;
+    }
+    int r = open(resolved, mode);
+    free(resolved);
+    return r;
+}
+
+int _dos_access(const char *path, int mode) {
+    char *resolved = resolve_path(path);
+    if (!resolved) {
+        errno = ENOENT;
+        return -1;
+    }
+    int r = access(resolved, mode);
+    free(resolved);
+    return r;
+}
+
+int main(int argc, char **argv) {
+    argv[0] = convert_path(argv[0]);
+    int ret = _dos_main(argc, argv);
+    return ret;
 }
