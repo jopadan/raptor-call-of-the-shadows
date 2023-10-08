@@ -210,26 +210,40 @@ VOID PTR_ReadJoyStick (VOID) {
     printf("PTR_ReadJoyStick\n");
 }
 
-//TSM
+//TSAPI
+#define MAX_TASKS (8)
 
-void TSM_Install(int rate) {
-    printf("TSM_Install %d\n", rate);
+static task * first_task = NULL;
+
+task    *TS_ScheduleTask( void ( *Function )( task * ), int rate,
+                          int priority, void *data ) {
+  struct task * task = (struct task *)calloc(sizeof(struct task), 1);
+  task->next = first_task;
+  if (first_task)
+    first_task->prev = task;
+  first_task = task;
+  task->TaskService = Function;
+  task->rate = rate;
+  task->priority = priority;
+  return task;
 }
-int TSM_NewService(void(*function)(void), int rate, int priority, int pause) {
-    printf("TSM_NewService %d %d %d\n", rate, priority, rate);
+
+void    TS_Shutdown( void ) {}
+int     TS_Terminate( struct task *task ) {
+    if (task == first_task) {
+        first_task = task->next;
+    }
+    if (task->prev)
+        task->prev->next = task->next;
+    if (task->next)
+        task->next->prev = task->prev;
+    free(task);
+    return 0;
 }
-void TSM_DelService(int id) {
-    printf("TSM_DelService %d\n", id);
+void TS_Dispatch() {
+
 }
-void TSM_Remove(void) {
-    printf("TSM_Remove\n");
-}
-void TSM_PauseService(int id) {
-    printf("TSM_PauseService %d\n", id);
-}
-void TSM_ResumeService(int id) {
-    printf("TSM_ResumeService %d\n", id);
-}
+
 
 // TILE
 

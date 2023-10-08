@@ -4,6 +4,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdint.h>
+#include "task_man.h"
 
 #include <limits.h>
 #define _MAX_PATH PATH_MAX
