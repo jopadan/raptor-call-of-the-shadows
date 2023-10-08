@@ -156,7 +156,7 @@ void _dos_update_screen() {
     }
     if (palette_updated) {
         SDL_Color colors[256];
-        BYTE *src = palette;
+        const BYTE *src = palette;
         for(unsigned i = 0; i != 256; ++i) {
             SDL_Color *color = colors + i;
             color->r = *src++;
@@ -167,6 +167,7 @@ void _dos_update_screen() {
             printf("SDL_SetPaletteColors: %s\n", SDL_GetError());
             abort();
         }
+        palette_updated = FALSE;
     }
     bool must_lock = SDL_MUSTLOCK(sdl_surface);
     if (must_lock) {
