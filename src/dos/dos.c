@@ -266,35 +266,48 @@ VOID PTR_ReadJoyStick (VOID) {
 //TSAPI
 #define MAX_TASKS (8)
 
-static task * first_task = NULL;
+struct ts_task {
+    struct task task;
+    SDL_TimerID timer;
+};
 
-task    *TS_ScheduleTask( void ( *Function )( task * ), int rate,
+static Uint32 SDLCALL TS_Callback (Uint32 interval, void *param) {
+    struct ts_task * ts_task = (struct ts_task *)param;
+    ts_task->task.TaskService(&ts_task->task);
+    return interval;
+}
+
+struct task *TS_ScheduleTask( void ( *Function )( task * ), int rate,
                           int priority, void *data ) {
-  struct task * task = (struct task *)calloc(sizeof(struct task), 1);
-  task->next = first_task;
-  if (first_task)
-    first_task->prev = task;
-  first_task = task;
+  int interval = (1000 + rate - 1) / rate;
+  printf("TS_ScheduleTask %d(%dms) %d\n", rate, interval, priority);
+  struct ts_task * ts_task = (struct ts_task *)calloc(sizeof(struct ts_task), 1);
+  struct task *task = &ts_task->task;
   task->TaskService = Function;
   task->rate = rate;
   task->priority = priority;
+  task->active = TRUE;
+  task->data = data;
+  ts_task->timer = SDL_AddTimer(interval, &TS_Callback, ts_task);
+  if (!ts_task->timer) {
+    printf("SDL_AddTimer failed: %s\n", SDL_GetError());
+    abort();
+  }
   return task;
 }
 
-void    TS_Shutdown( void ) {}
-int     TS_Terminate( struct task *task ) {
-    if (task == first_task) {
-        first_task = task->next;
-    }
-    if (task->prev)
-        task->prev->next = task->next;
-    if (task->next)
-        task->next->prev = task->prev;
-    free(task);
+int TS_Terminate( struct task *task ) {
+    struct ts_task * ts_task = (struct ts_task *)task;
+    printf("TS_Terminate\n");
+    SDL_RemoveTimer(ts_task->timer);
+    free(ts_task);
     return 0;
 }
-void TS_Dispatch() {
 
+void TS_Shutdown( void ) {
+}
+
+void TS_Dispatch() {
 }
 
 
