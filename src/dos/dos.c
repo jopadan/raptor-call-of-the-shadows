@@ -78,6 +78,19 @@ int int386( int inter_no,
                     abort();
             }
             break;
+        case 0x33:
+            switch(in_regs->h.ah)
+            {
+                case 0x00: {
+                    printf("int 0x33: GetMouseInfo\n");
+                    out_regs->w.ax = 0;
+                    out_regs->w.bx = 3;
+                    break;
+                }
+                default:
+                    abort();
+            }
+            break;
         default:
             abort();
     }
