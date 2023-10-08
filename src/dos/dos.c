@@ -17,6 +17,17 @@
 #include <SDL2/SDL.h>
 #include <assert.h>
 
+static SDL_Window * sdl_window = NULL;
+static SDL_Renderer * sdl_renderer = NULL;
+static int zoom = 3;
+static uint8_t palette[0x300];
+static bool palette_updated = FALSE;
+static unsigned palette_index_r = 0;
+static unsigned palette_index_w = 0;
+static unsigned char retrace = 0;
+
+uint8_t _dos_video_ram[0x12c00];
+
 int _dpmi_dosalloc(unsigned short size, uintptr_t *segment) {
     printf("_dpmi_dosalloc %u\n", size);
     void * ptr = calloc(1, size);
@@ -62,6 +73,7 @@ int rap_random(int x) {
 
 void _disable(void) {}
 void _enable(void) {}
+
 int int386( int inter_no,
             const union REGS *in_regs,
             union REGS *out_regs ) {
@@ -74,6 +86,20 @@ int int386( int inter_no,
             {
                 case 0x00:
                     printf("int 0x10: SetVideoMode 0x%02x\n", in_regs->h.al);
+                    if (in_regs->h.al == 0x13) {
+                        assert(sdl_window == NULL);
+                        sdl_window = SDL_CreateWindow("RAPTOR: Call Of The Shadows V1.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320 * zoom, 240 * zoom, 0);
+                        if (!sdl_window) {
+                            printf("SDL_CreateWindow: %s", SDL_GetError());
+                            exit(1);
+                        }
+                        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+                        sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
+                        if (!sdl_renderer) {
+                            printf("SDL_CreateRenderer: %s", SDL_GetError());
+                            exit(1);
+                        }
+                    }
                     break;
                 case 0x02:
                     printf("int 0x10: SetCursorPosition %u %u %u\n", in_regs->h.bh, in_regs->h.dh, in_regs->h.dl);
@@ -102,15 +128,38 @@ int int386( int inter_no,
 }
 
 int inp(unsigned short port) {
-    printf("INP %04x\n", port);
-    return 0;
+    switch(port)
+    {
+    case 0x3DA:
+        retrace ^= 8;
+        return retrace;
+    case 0x3c9:
+        return palette[palette_index_r++];
+    default:
+        printf("reading from port 0x%04x\n", port);
+        abort();
+    }
 }
 
 int outp(
    unsigned short port,
    int data_byte
 ) {
-    printf("OUTP %04x %d\n", port, data_byte);
+    switch(port) {
+    case 0x3c7:
+        palette_index_r = data_byte * 3;
+        break;
+    case 0x3c8:
+        palette_index_w = data_byte * 3;
+        break;
+    case 0x3c9:
+        palette[palette_index_w++] = data_byte;
+        palette_updated = true;
+        break;
+    default:
+        printf("writing 0x%02x to port 0x%04x\n", data_byte, port);
+        abort();
+    }
     return data_byte;
 }
 

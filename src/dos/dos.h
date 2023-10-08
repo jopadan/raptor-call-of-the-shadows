@@ -100,4 +100,6 @@ char * ltoa(long l, char * buffer, int radix);
 void _dos_setvect(unsigned intnum, void (*handler)());
 void (*_dos_getvect(unsigned intnum))();
 
+extern uint8_t _dos_video_ram[];
+
 #endif

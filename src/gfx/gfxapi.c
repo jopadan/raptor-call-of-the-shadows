@@ -236,17 +236,14 @@ VOID
 
    if ( _dpmi_dosalloc ( 32, &segment ) ) EXIT_Error(err);
    ltable = ( BYTE *)( segment<<4 );
-   ltable = (BYTE *)(((INT)ltable+255)&~0xff);
 
    if ( _dpmi_dosalloc ( 32, &segment ) ) EXIT_Error(err);
    dtable = ( BYTE *)( segment<<4 );
-   dtable = (BYTE *)(((INT)dtable+255)&~0xff);
 
    if ( _dpmi_dosalloc ( 32, &segment ) ) EXIT_Error(err);
    gtable = ( BYTE *)( segment<<4 );
-   gtable = (BYTE *)(((INT)gtable+255)&~0xff);
 
-   displayscreen = (BYTE *)0xa0000;
+   displayscreen = _dos_video_ram;
 }
 
 /**************************************************************************

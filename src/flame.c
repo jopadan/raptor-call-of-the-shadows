@@ -28,7 +28,7 @@ VOID
    {
       stable [ loop ] = stmem [ loop ];
 
-      stable [ loop ] = (BYTE *)(((INT)stable[loop]+255)&~0xff);
+      stable [ loop ] = stable[loop]+255;
 
       GFX_MakeLightTable ( palette, stable[loop], (MAX_SHADES-loop)*2 );
    }

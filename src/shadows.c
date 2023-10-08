@@ -131,7 +131,6 @@ VOID
 )
 {
    sdtable = sdtablemem;
-   sdtable = (BYTE *)(((INT)sdtable+255)&~0xff);
 
    GFX_3D_SetView ( 160, 100, 1000 );
 }
