@@ -60,7 +60,7 @@ extern   BOOL     ptr_init_flag   ;
 /*========================================================================
   PTR_UpdateCursor() - Updates Mouse Cursor - should be called by intterupt
   ========================================================================*/
-SPECIAL INT
+SPECIAL VOID
 PTR_UpdateCursor (
 VOID
 );

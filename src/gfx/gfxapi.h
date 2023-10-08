@@ -70,7 +70,7 @@ typedef struct
 /*==========================================================================
    GFX_TimeFrameRate () - Should be interrupt called at 70 fps
  ==========================================================================*/
-TSMCALL INT
+TSMCALL VOID
 GFX_TimeFrameRate (
 VOID
 );

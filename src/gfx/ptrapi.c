@@ -320,13 +320,13 @@ VOID
 /*========================================================================
   PTR_UpdateCursor() - Updates Mouse Cursor - should be called by intterupt
   ========================================================================*/
-TSMCALL INT
+TSMCALL VOID
 PTR_UpdateCursor (
 VOID
 )
 {
    if ( mouseonhold )
-      return ( 0 );
+      return;
 
    if ( joyactive )
    {
@@ -374,8 +374,6 @@ VOID
       cursory = dm_y;
       not_in_update = TRUE;
    }
-
-   return(0);
 }
   
 /*==========================================================================

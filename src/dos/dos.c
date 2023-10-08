@@ -29,6 +29,7 @@ static unsigned char retrace = 0;
 uint8_t _dos_video_ram[0x12c00];
 
 int _dpmi_dosalloc(unsigned short size, uintptr_t *segment) {
+    size *= 16;
     printf("_dpmi_dosalloc %u\n", size);
     void * ptr = calloc(1, size);
     if (!ptr)

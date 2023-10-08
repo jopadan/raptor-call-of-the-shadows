@@ -80,13 +80,12 @@ PUBLIC   INT      gfx_imga    = 0;
 /*==========================================================================
    GFX_TimeFrameRate () - Should be interrupt called at 70 fps
  ==========================================================================*/
-TSMCALL INT
+TSMCALL VOID
 GFX_TimeFrameRate (
 VOID
 )
 {
    framecount++;
-   return(0);
 }
 
 /***************************************************************************
@@ -223,7 +222,7 @@ VOID
    INT   loop;
    uintptr_t segment;
 
-   if ( _dpmi_dosalloc ( 64000, &segment ) ) EXIT_Error(err);
+   if ( _dpmi_dosalloc ( 4000, &segment ) ) EXIT_Error(err);
    displaybuffer = ( BYTE *)( segment<<4 );
 
    _dpmi_lockregion( displaybuffer, 64000 );
