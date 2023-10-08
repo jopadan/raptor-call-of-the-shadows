@@ -102,4 +102,6 @@ void (*_dos_getvect(unsigned intnum))();
 
 extern uint8_t _dos_video_ram[];
 
+int strcmpi(const char *, const char *);
+
 #endif
