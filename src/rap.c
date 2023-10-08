@@ -1320,6 +1320,7 @@ VOID
 
    printf ("_dpmi_getmemsize() = %u\n",memsize );
 
+#if 0
    if ( memsize > MAX_HMEM + MEM_KEEP )
       memsize = MAX_HMEM;
    else
@@ -1342,7 +1343,7 @@ VOID
    }
    else
       printf ("Lowmem = NONE\n" );
-
+#endif
    g_highmem = calloc ( memsize, 1 );
 
    if ( g_highmem == NUL && memsize > MEM_KEEP )
@@ -1381,6 +1382,8 @@ RAP_TestDIZ (
 VOID
 )
 {
+   return TRUE;
+#if 0
    CHAR *   fname = "FILE_ID.DIZ";
    BYTE     temp [768];
    BYTE *   cmp;
@@ -1405,6 +1408,7 @@ VOID
       GLB_FreeItem ( FILE_ID_DIX );
 
    return ( rval );
+#endif
 }
 
 VOID
