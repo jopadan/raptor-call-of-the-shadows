@@ -33,7 +33,7 @@ PUBLIC   volatile INT framecount = 0;
 PUBLIC   INT      g_rseed        = 1;
 PUBLIC   DWORD    ylookup [ SCREENHEIGHT ];
 PUBLIC   BYTE *   displaybuffer  = (BYTE *)0x0000;
-PUBLIC   BYTE *   displayscreen  = (BYTE *)0xa0000;
+PUBLIC   BYTE *   displayscreen  = (BYTE *)_dos_video_ram;
 PUBLIC   BOOL     update_start   = FALSE;
 PUBLIC   INT      ud_x           = 0;
 PUBLIC   INT      ud_y           = 0;

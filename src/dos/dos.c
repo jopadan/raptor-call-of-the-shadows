@@ -19,6 +19,8 @@
 
 static SDL_Window * sdl_window = NULL;
 static SDL_Renderer * sdl_renderer = NULL;
+static SDL_Surface * sdl_surface = NULL;
+static SDL_Palette * sdl_palette = NULL;
 static int zoom = 3;
 static uint8_t palette[0x300];
 static bool palette_updated = FALSE;
@@ -92,14 +94,25 @@ int int386( int inter_no,
                         sdl_window = SDL_CreateWindow("RAPTOR: Call Of The Shadows V1.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320 * zoom, 240 * zoom, 0);
                         if (!sdl_window) {
                             printf("SDL_CreateWindow: %s", SDL_GetError());
-                            exit(1);
+                            abort();
                         }
                         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-                        sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
+                        sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
                         if (!sdl_renderer) {
                             printf("SDL_CreateRenderer: %s", SDL_GetError());
-                            exit(1);
+                            abort();
                         }
+                        sdl_palette = SDL_AllocPalette(256);
+                        if (!sdl_palette) {
+                            printf("SDL_CreateRenderer: %s", SDL_GetError());
+                            abort();
+                        }
+                        sdl_surface = SDL_CreateRGBSurfaceWithFormat(0, 320, 200, 8, 0);
+                        if (!sdl_surface) {
+                            printf("SDL_CreateRGBSurfaceWithFormat: %s\n", SDL_GetError());
+                            abort();
+                        }
+                        SDL_SetSurfacePalette(sdl_surface, sdl_palette);
                     }
                     break;
                 case 0x02:
@@ -126,6 +139,50 @@ int int386( int inter_no,
             abort();
     }
     return out_regs->x.eax;
+}
+
+void _dos_update_screen() {
+    if (!sdl_window)
+        return;
+
+    SDL_Event event;
+    while(SDL_PollEvent(&event)) {
+        switch(event.type) {
+        case SDL_QUIT:
+            printf("Quit requested\n");
+            exit(0);
+            break;
+        }
+    }
+    bool must_lock = SDL_MUSTLOCK(sdl_surface);
+    if (must_lock) {
+        if (SDL_LockSurface(sdl_surface) != 0) {
+            printf("SDL_LockSurface: %s\n", SDL_GetError());
+            abort();
+        }
+    }
+    BYTE *dst = (BYTE *)sdl_surface->pixels;
+    assert(dst);
+    const BYTE * src = _dos_video_ram;
+    int h = 200;
+    while(h--) {
+        // memcpy(dst, src, 320);
+        dst += sdl_surface->pitch;
+        src += 320;
+    }
+    if (must_lock)
+        SDL_UnlockSurface(sdl_surface);
+
+    SDL_Surface * window_surface = SDL_GetWindowSurface(sdl_window);
+    if (!window_surface) {
+        printf("SDL_GetWindowSurface: %s\n", SDL_GetError());
+        abort();
+    }
+    SDL_Rect src_rect = {0, 0, 320, 200};
+    SDL_Rect dst_rect = {0, 0, 320, 200};
+    SDL_BlitSurface(sdl_surface, &src_rect, window_surface, &dst_rect);
+
+    SDL_RenderPresent(sdl_renderer);
 }
 
 int inp(unsigned short port) {
@@ -322,7 +379,7 @@ VOID TILE_ShakeScreen(VOID) {
     printf("TILE_ShakeScreen\n");
 }
 VOID TILE_DisplayScreen(VOID) {
-    printf("TILE_ShakeScreen\n");
+    printf("TILE_DisplayScreen\n");
 }
 VOID TILE_ClipDraw ( VOID ) {
     printf("TILE_ClipDraw\n");
@@ -334,81 +391,6 @@ BYTE * inmem
 ) {
     printf("ANIM_Render\n");
 }
-
-VOID GFX_Shade (
-BYTE * outmem,             // INPUT : EAX pointer to destination
-INT    maxlen,             // INPUT : EDX length of buffer to shade
-BYTE * dtable              // INPUT : EBX pointer to shade table
-) {
-    printf("GFX_Shade\n");
-}
-
-VOID  
-GFX_PutPic (
-VOID
-) {
-    printf("GFX_PutPic\n");
-}
-
-VOID 
-GFX_PutMaskPic (
-VOID
-) {
-    printf("GFX_MaskPic\n");
-}
-
-VOID 
-GFX_ShadeSprite ( 
-BYTE * dest, 
-BYTE * inmem, 
-BYTE * dtable
-) {
-    printf("GFX_ShadeSprite\n");
-}
-
-VOID __cdecl
-GFX_CScaleLine (
-BYTE * outmem,             // INPUT : pointer to destination
-BYTE * inmem               // INPUT : pointer to picture data
-) {
-    printf("GFX_CScaleLine\n");
-}
-
-VOID __cdecl
-GFX_ScaleLine (
-BYTE * outmem,             // INPUT : pointer to destination
-BYTE * inmem               // INPUT : pointer to picture data
-) {
-    printf("GFX_CScaleLine\n");
-}
-
-VOID  
-GFX_DisplayScreen (
-VOID
-) {
-    printf("GFX_DisplayScreen\n");
-}
-
-VOID 
-GFX_DrawSprite ( 
-BYTE * dest, 
-BYTE * inmem 
-) {
-    printf("GFX_DrawSprite\n");
-}
-
-VOID __cdecl
-GFX_DrawChar (
-BYTE  * dest,              // OUTPUT: destination buffer
-BYTE  * inmem,             // INPUT : source buffer
-INT     width,             // INPUT : width of character
-INT     height,            // INPUT : height of character
-INT     addx,              // INPUT : addx offset
-INT     color              // INPUT : base color
-) {
-    printf("GFX_DrawChar %d %d %d %d\n", width, height, addx, color);
-}
-
 
 //MUSIC
 
@@ -628,6 +610,11 @@ int _dos_access(const char *path, int mode) {
 }
 
 int main(int argc, char **argv) {
+    if (SDL_Init(SDL_INIT_EVERYTHING | SDL_INIT_NOPARACHUTE)) {
+        printf("SDL_Init: %s\n", SDL_GetError());
+        exit(1);
+    }
+
     argv[0] = convert_path(argv[0]);
     int ret = _dos_main(argc, argv);
     return ret;
