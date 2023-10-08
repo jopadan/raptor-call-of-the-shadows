@@ -274,7 +274,7 @@ VOID
    slib->hlx         = slib->h->width>>1;
    slib->hly         = slib->h->height>>1;
    slib->ht          = S_GRALL;
-  
+
    // == LASER TURRET =====================================
    slib              = &shot_lib [ S_TURRET ];
    slib->lumpnum     = EMPTY;
@@ -300,10 +300,12 @@ VOID
       slib->pic[i] = GLB_LockItem ( item );
    }
    slib->h           = ( GFX_PIC * )slib->pic [ 0 ];
-   slib->hlx         = slib->h->width>>1;
-   slib->hly         = slib->h->height>>1;
+   if (slib->h) { //EMPTY
+      slib->hlx         = slib->h->width>>1;
+      slib->hly         = slib->h->height>>1;
+   }
    slib->ht          = S_ALL;
-  
+
    // == MISSLE_PODS =====================================
    slib              = &shot_lib [ S_MISSLE_PODS ];
    slib->lumpnum     = MISRAT_BLK;
