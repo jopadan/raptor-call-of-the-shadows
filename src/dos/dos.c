@@ -18,6 +18,10 @@
 #include <SDL2/SDL_mixer.h>
 #include <assert.h>
 
+
+#define GAME_MIX_FREQ (11025)
+#define GAME_MIX_FORMAT (AUDIO_U8)
+
 static SDL_Window * sdl_window = NULL;
 static SDL_Renderer * sdl_renderer = NULL;
 static SDL_Surface * sdl_surface = NULL;
@@ -466,7 +470,7 @@ int   MUSIC_Init( int SoundCard, int Address ) {
     printf("MUSIC_Init %d %d\n", SoundCard, Address);
     int r = Mix_Init(MIX_INIT_MID);
     printf("MIX_Init: %08x\n", r);
-    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 512)) {
+    if (Mix_OpenAudio(GAME_MIX_FREQ, GAME_MIX_FORMAT, MIX_DEFAULT_CHANNELS, 16)) {
         printf("Mix_OpenAudio: %s\n", SDL_GetError());
         abort();
     }
@@ -628,14 +632,14 @@ int FX_PlayRaw( char *ptr, unsigned long length, unsigned rate,
         return idx;
 
     SDL_AudioCVT cvt;
-    int r = SDL_BuildAudioCVT(&cvt, AUDIO_U8, 1, rate, AUDIO_S16, 1, MIX_DEFAULT_FREQUENCY);
+    int r = SDL_BuildAudioCVT(&cvt, AUDIO_U8, 1, rate, GAME_MIX_FORMAT, 1, GAME_MIX_FREQ);
     if (r < 0) {
         printf("SDL_BuildAudioCVT: %s\n", SDL_GetError());
         abort();
     }
+    cvt.buf = (Uint8*)malloc(length * cvt.len_mult);
+    memcpy(cvt.buf, ptr, length);
     if (r > 0) {
-        cvt.buf = (Uint8*)malloc(length * cvt.len_mult);
-        memcpy(cvt.buf, ptr, length);
         if (!cvt.buf) {
             perror("malloc");
             return -1;
@@ -646,6 +650,8 @@ int FX_PlayRaw( char *ptr, unsigned long length, unsigned rate,
             free(cvt.buf);
             return -1;
         }
+    } else {
+        cvt.len_cvt = length;
     }
     Mix_Chunk *chunk = Mix_QuickLoad_RAW(cvt.buf, cvt.len_cvt);
     if (!chunk) {
