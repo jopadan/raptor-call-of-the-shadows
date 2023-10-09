@@ -496,7 +496,9 @@ void  MUSIC_SetVolume( int volume ) {
 
 int   MUSIC_SongPlaying( void ) {
     printf("MUSIC_SongPlaying\n");
-    return Mix_PlayingMusic()? 1: 0;
+    // FIXME: does not work for midi:
+    // return Mix_PlayingMusic()? 1: 0;
+    return 0;
 }
 
 int   MUSIC_StopSong( void ) {
