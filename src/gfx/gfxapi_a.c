@@ -39,7 +39,6 @@ VOID
 GFX_PutPic (
 VOID
 ) {
-    printf("GFX_PutPic %d,%d %d,%d\n", gfx_xp, gfx_yp, gfx_lx, gfx_ly);
     BYTE * src = gfx_inmem;
     BYTE * dst = displaybuffer + gfx_yp * SCREENWIDTH + gfx_xp;
     INT h = gfx_ly;
@@ -86,7 +85,6 @@ VOID
 GFX_DisplayScreen (
 VOID
 ) {
-    printf("GFX_DisplayScreen %d %d %d %d\n", ud_x, ud_y, ud_lx, ud_ly);
     BYTE * src = displaybuffer + ud_y * SCREENWIDTH + ud_x;
     BYTE * dst = displayscreen + ud_y * SCREENWIDTH + ud_x;
     INT h = ud_ly;
@@ -118,4 +116,19 @@ INT     color              // INPUT : base color
     printf("GFX_DrawChar %d %d %d %d\n", width, height, addx, color);
 }
 
+VOID
+ANIM_Render (
+BYTE * inmem
+) {
+    while(1) {
+        WORD w0 = inmem[0] | ((WORD) inmem[1] << 8);
+        if (w0 == 0)
+            break;
+        WORD pos = inmem[4] | ((WORD) inmem[5] << 8);
+        WORD len = inmem[6] | ((WORD) inmem[7] << 8);
+        inmem += 8;
+        memcpy(displaybuffer + pos, inmem, len);
+        inmem += len;
+    }
+}
 

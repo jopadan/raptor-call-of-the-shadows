@@ -459,13 +459,6 @@ VOID TILE_ClipDraw ( VOID ) {
     printf("TILE_ClipDraw\n");
 }
 
-VOID
-ANIM_Render (
-BYTE * inmem
-) {
-    printf("ANIM_Render\n");
-}
-
 //MUSIC
 
 int   MUSIC_Init( int SoundCard, int Address ) {
