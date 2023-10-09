@@ -35,7 +35,8 @@ add_library(rapcore STATIC
     apodmx/mus2mid.c
 )
 target_include_directories(rapcore PUBLIC dos gfx apodmx)
-target_compile_definitions(rapcore PUBLIC -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl=)
+target_compile_options(rapcore PRIVATE -fshort-enums)
+target_compile_definitions(rapcore PUBLIC -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl= )
 target_compile_definitions(rapcore PRIVATE -Dstricmp=strcmpi -Dmain=_dos_main -Dopen=_dos_open -Daccess=_dos_access)
 
 add_executable(rap

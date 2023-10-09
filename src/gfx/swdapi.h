@@ -128,7 +128,7 @@ typedef struct
    INT      ly             ;  // HEIGHT IN PIXELS
    DWORD    txtoff         ;  // OFFSET TO TEXT DATA ( BYTES )
    BYTE  *  sptr           ;  // SEG POINTER TO SAVE INFO
-} SFIELD;
+} __attribute__((packed)) SFIELD;
   
 typedef struct
 {
@@ -156,7 +156,7 @@ typedef struct
    INT      lx             ;  // WIDTH IN PIXELS
    INT      ly             ;  // HEIGHT IN PIXELS
    BOOL     shadow         ;  // SHADOW TRUE/FALSE
-} SWIN;
+} __attribute__((packed)) SWIN;
   
 typedef struct
 {
@@ -164,7 +164,7 @@ typedef struct
    BOOL           flag     ;  // TRUE = in use ,FALSE = not in use
    BOOL           viewflag ;  // TRUE = has viewarea(s) FALSE = none
    SWIN  *        win      ;  // POINTER TO WINDOW
-} SWD_WIN;
+} __attribute__((packed)) SWD_WIN;
   
 typedef struct
 {
@@ -186,7 +186,7 @@ typedef struct
    INT sy                  ;
    INT sheight             ;
    INT swidth              ;
-} SWD_DLG;
+} __attribute__((packed)) SWD_DLG;
   
 /***************************************************************************
  SWD_Install() - Initializes Window system

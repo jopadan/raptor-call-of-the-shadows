@@ -2,6 +2,7 @@
 #define _TYPES_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 typedef enum
 {
@@ -20,15 +21,15 @@ typedef enum
 #define ASIZE(a) (sizeof(a)/sizeof((a)[0]))
 #define FMUL32(a) ( ( a ) << 5 )
 
-typedef unsigned char BYTE;
-typedef unsigned short WORD;
-typedef unsigned int DWORD;
+typedef uint8_t BYTE;
+typedef uint16_t WORD;
+typedef uint32_t DWORD;
 typedef void VOID;
 typedef char CHAR;
-typedef short SHORT;
-typedef unsigned short USHORT;
-typedef int	INT;
-typedef unsigned int UINT;
+typedef int16_t SHORT;
+typedef uint16_t USHORT;
+typedef int32_t	INT;
+typedef uint32_t UINT;
 
 #define random(x) rap_random(x)
 extern int rap_random(int x);
