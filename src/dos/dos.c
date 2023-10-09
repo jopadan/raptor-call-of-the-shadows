@@ -214,7 +214,7 @@ int inp(unsigned short port) {
         retrace ^= 8;
         return retrace;
     case 0x3c9:
-        return palette[palette_index_r++];
+        return palette[palette_index_r++] >> 2;
     default:
         printf("reading from port 0x%04x\n", port);
         abort();
@@ -233,8 +233,11 @@ int outp(
         palette_index_w = data_byte * 3;
         break;
     case 0x3c9:
-        palette[palette_index_w++] = data_byte;
+        palette[palette_index_w++] = data_byte << 2;
         palette_updated = true;
+        if (palette_index_w == sizeof(palette)) {
+            _dos_update_screen();
+        }
         break;
     default:
         printf("writing 0x%02x to port 0x%04x\n", data_byte, port);
