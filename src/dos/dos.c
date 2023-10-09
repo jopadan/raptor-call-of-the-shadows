@@ -15,6 +15,7 @@
 #include "music.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <assert.h>
 
 static SDL_Window * sdl_window = NULL;
@@ -468,34 +469,59 @@ BYTE * inmem
 //MUSIC
 
 int   MUSIC_Init( int SoundCard, int Address ) {
+    printf("MUSIC_Init %d %d\n", SoundCard, Address);
+    int r = Mix_Init(MIX_INIT_MID);
+    printf("MIX_Init: %08x\n", r);
+    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)) {
+        printf("Mix_OpenAudio: %s\n", SDL_GetError());
+        abort();
+    }
     return MUSIC_Ok;
 }
 
 void  MUSIC_Continue( void ) {
     printf("MUSIC_Continue\n");
+    Mix_ResumeMusic();
 }
 
 void  MUSIC_Pause( void ) {
     printf("MUSIC_Pause\n");
+    Mix_PauseMusic();
 }
 
 void  MUSIC_SetVolume( int volume ) {
     printf("MUSIC_SetVolume %d\n", volume);
+    Mix_VolumeMusic(volume * MIX_MAX_VOLUME / 255);
 }
 
 int   MUSIC_SongPlaying( void ) {
     printf("MUSIC_SongPlaying\n");
-    return 0;
+    return Mix_PlayingMusic()? 1: 0;
 }
 
 int   MUSIC_StopSong( void ) {
     printf("MUSIC_StopSong\n");
+    Mix_HaltMusic();
     return 0;
 }
 
-int   MUSIC_PlaySong( unsigned char *song, int loopflag ) {
-    printf("MUSIC_PlaySong %s, loop: %d\n", song, loopflag);
-    return 0;
+int   MUSIC_PlaySong( unsigned char *song, int song_len, int loopflag ) {
+    printf("MUSIC_PlaySong %d bytes, loop: %d\n", song_len, loopflag);
+    SDL_RWops *rw = SDL_RWFromMem(song, song_len);
+    if (!rw) {
+        printf("SDL_RWFromMem: %s\n", SDL_GetError());
+        abort();
+    }
+    Mix_Music * music = Mix_LoadMUS_RW(rw, 1);
+    if (!music) {
+        printf("Mix_LoadMUS_RW: %s\n", SDL_GetError());
+        abort();
+    }
+    if (Mix_PlayMusic(music, loopflag) != 0) {
+        printf("Mix_PlayMusic: %s\n", SDL_GetError());
+        abort();
+    }
+    return MUSIC_Ok;
 }
 
 int   MUSIC_FadeVolume( int tovolume, int milliseconds ) {
@@ -510,6 +536,8 @@ int   MUSIC_FadeActive( void ) {
 
 int   MUSIC_Shutdown( void ) {
     printf("MUSIC_Shutdown\n");
+    Mix_CloseAudio();
+    Mix_Quit();
     return 0;
 }
 

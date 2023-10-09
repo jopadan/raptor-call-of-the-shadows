@@ -75,7 +75,7 @@ int   MUSIC_SongPlaying( void );
 void  MUSIC_Continue( void );
 void  MUSIC_Pause( void );
 int   MUSIC_StopSong( void );
-int   MUSIC_PlaySong( unsigned char *song, int loopflag );
+int   MUSIC_PlaySong( unsigned char *song, int song_len, int loopflag );
 // *** VERSIONS RESTORATION ***
 #if (LIBVER_ASSREV < 19950821L)
 void  MUSIC_SetPosition( int pos );

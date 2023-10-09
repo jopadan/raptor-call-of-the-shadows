@@ -42,4 +42,4 @@ add_executable(rap
     dos/dos.c
 )
 
-target_link_libraries(rap PRIVATE rapcore SDL2)
+target_link_libraries(rap PRIVATE rapcore SDL2_mixer SDL2)

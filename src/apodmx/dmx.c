@@ -65,6 +65,7 @@ fx_blaster_config dmx_blaster;
 
 void *mus_data = NULL;
 char *mid_data = NULL;
+int mid_data_size = 0;
 
 int mus_loop = 0;
 int dmx_mus_port = 0;
@@ -142,6 +143,7 @@ int MUS_RegisterSong(void *data) {
         fread(mid_data, 1, midlen, mid);
         fclose(mid);
         mus_data = mid_data;
+        mid_data_size = midlen;
         remove("temp.mid");
         remove("temp.mus");
         return 0;
@@ -186,7 +188,7 @@ int MUS_PlaySong(int handle, int volume) {
     {
         return 1;
     }
-    status = MUSIC_PlaySong((unsigned char*)mus_data, mus_loop);
+    status = MUSIC_PlaySong((unsigned char*)mus_data, mid_data_size, mus_loop);
     if (status == MUSIC_Ok)
     {
         mus_active = 1;
@@ -208,7 +210,7 @@ int MUS_FadeInSong(int handle, int ms) {
     target = mus_mastervolume * 2;
     MUSIC_SetVolume(0);
     MUSIC_FadeVolume(target, ms);
-    status = MUSIC_PlaySong((unsigned char*)mus_data, mus_loop);
+    status = MUSIC_PlaySong((unsigned char*)mus_data, mid_data_size, mus_loop);
     if (status == MUSIC_Ok)
     {
         mus_active = 1;
