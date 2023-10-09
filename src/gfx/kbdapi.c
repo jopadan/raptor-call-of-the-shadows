@@ -103,7 +103,6 @@ KBD_ReadScan(void)
             if ( key == SC_CAPS_LOCK )
                capslock = TRUE;
 
-            *(short *)0x41c = *(short *)0x41a; // clear bios key buffer
             break;
       }
    }

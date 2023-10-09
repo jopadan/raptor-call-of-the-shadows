@@ -27,6 +27,10 @@ static bool palette_updated = FALSE;
 static unsigned palette_index_r = 0;
 static unsigned palette_index_w = 0;
 static unsigned char retrace = 0;
+typedef void (*_dos_int_handler)();
+static _dos_int_handler int_handlers[256];
+static uint8_t kbd_code[2];
+static uint8_t kbd_code_r = 0;
 
 uint8_t _dos_video_ram[0x12c00];
 
@@ -141,13 +145,51 @@ int int386( int inter_no,
     return out_regs->x.eax;
 }
 
+
+uint8_t _dos_keycode(uint8_t code, bool release) {
+    return code | (release? 0x80: 0x00);
+}
+
+void _dos_translate_key(SDL_Scancode code, bool release) {
+    kbd_code_r = 0;
+    kbd_code[0] = kbd_code[1] = 0;
+    switch(code) {
+    case SDL_SCANCODE_ESCAPE:
+        kbd_code[0] = _dos_keycode(1, release);
+        break;
+    case SDL_SCANCODE_1:
+    case SDL_SCANCODE_2:
+    case SDL_SCANCODE_3:
+    case SDL_SCANCODE_4:
+    case SDL_SCANCODE_5:
+    case SDL_SCANCODE_6:
+    case SDL_SCANCODE_7:
+    case SDL_SCANCODE_8:
+    case SDL_SCANCODE_9:
+    case SDL_SCANCODE_0:
+        kbd_code[0] = _dos_keycode(2 + code - SDL_SCANCODE_1, release);
+        break;
+    default:
+        printf("KBD: missing scancode for %u\n", code);
+        return;
+    }
+    if (int_handlers[9] != NULL)
+        int_handlers[9]();
+}
+
+
 void _dos_update_screen() {
+    printf("_dos_update_screen\n");
     if (!sdl_window)
         return;
 
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
         switch(event.type) {
+        case SDL_KEYDOWN:
+        case SDL_KEYUP:
+            _dos_translate_key(event.key.keysym.scancode, event.type == SDL_KEYUP);
+            break;
         case SDL_QUIT:
             printf("Quit requested\n");
             exit(0);
@@ -210,6 +252,8 @@ void _dos_update_screen() {
 int inp(unsigned short port) {
     switch(port)
     {
+    case 0x60:
+        return kbd_code_r < sizeof(kbd_code)? kbd_code[kbd_code_r++]: 0;
     case 0x3DA:
         retrace ^= 8;
         return retrace;
@@ -226,6 +270,8 @@ int outp(
    int data_byte
 ) {
     switch(port) {
+    case 0x20: //PIC1 control
+        break;
     case 0x3c7:
         palette_index_r = data_byte * 3;
         break;
@@ -247,12 +293,14 @@ int outp(
 }
 
 void _dos_setvect(unsigned intnum, void (*handler)()) {
-    printf("DOSSETVECT %u\n", intnum);
+    printf("_dos_setvect %u\n", intnum);
+    assert(intnum < 256);
+    int_handlers[intnum] = handler;
 }
 
 void (*_dos_getvect(unsigned intnum))() {
-    printf("_dos_getvect %u\n", intnum);
-    return NULL;
+    assert(intnum < 256);
+    return int_handlers[intnum];
 }
 
 int strcmpi(const char *str1, const char *str2) {
