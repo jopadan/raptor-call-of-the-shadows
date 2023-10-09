@@ -181,7 +181,7 @@ void _dos_update_screen() {
     const BYTE * src = _dos_video_ram;
     int h = 200;
     while(h--) {
-        // memcpy(dst, src, 320);
+        memcpy(dst, src, 320);
         dst += sdl_surface->pitch;
         src += 320;
     }
