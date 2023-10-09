@@ -196,6 +196,14 @@ void _dos_update_screen() {
 
     SDL_BlitSurface(sdl_surface, NULL, window_surface, NULL);
 
+    SDL_RenderClear(sdl_renderer);
+    SDL_Texture *tex = SDL_CreateTextureFromSurface(sdl_renderer, sdl_surface);
+    if (!tex) {
+        printf("SDL_CreateTextureFromSurface: %s\n", SDL_GetError());
+        abort();
+    }
+    SDL_RenderCopy(sdl_renderer, tex, NULL, NULL);
+    SDL_DestroyTexture(tex);
     SDL_RenderPresent(sdl_renderer);
 }
 
