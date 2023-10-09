@@ -904,7 +904,7 @@ VOID
    snd_type = SND_NONE;
 
    music_volume = INI_GetPreferenceLong ( "Music", "Volume", 127 );
-   cardtype = INI_GetPreferenceLong ( "Music", "CardType", 0L );
+   cardtype = INI_GetPreferenceLong ( "Music", "CardType", (long)M_SB );
    port     = INI_GetPreferenceHex ( "Music", "BasePort", -1L );
    midiport = INI_GetPreferenceHex ( "Music", "MidiPort", -1L );
    irq      = INI_GetPreferenceLong ( "Music", "Irq", -1L );
@@ -971,7 +971,7 @@ VOID
    else printf ("Music Enabled (%s)\n", cards [ cardtype ] );
 
    fx_volume 	= INI_GetPreferenceLong ( "SoundFX", "Volume", 127 );
-   cardtype 	= INI_GetPreferenceLong ( "SoundFX", "CardType", 0L );
+   cardtype 	= INI_GetPreferenceLong ( "SoundFX", "CardType", (long)M_SB );
    port     	= INI_GetPreferenceHex ( "SoundFX", "BasePort", -1L );
    midiport 	= INI_GetPreferenceHex ( "SoundFX", "MidiPort", -1L );
    irq      	= INI_GetPreferenceLong ( "SoundFX", "Irq", -1L );

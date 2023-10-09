@@ -22,6 +22,7 @@ static SDL_Window * sdl_window = NULL;
 static SDL_Renderer * sdl_renderer = NULL;
 static SDL_Surface * sdl_surface = NULL;
 static SDL_Palette * sdl_palette = NULL;
+static Mix_Music * sdl_music = NULL;
 static int zoom = 3;
 static uint8_t palette[0x300];
 static bool palette_updated = FALSE;
@@ -465,7 +466,7 @@ int   MUSIC_Init( int SoundCard, int Address ) {
     printf("MUSIC_Init %d %d\n", SoundCard, Address);
     int r = Mix_Init(MIX_INIT_MID);
     printf("MIX_Init: %08x\n", r);
-    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)) {
+    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 512)) {
         printf("Mix_OpenAudio: %s\n", SDL_GetError());
         abort();
     }
@@ -473,12 +474,10 @@ int   MUSIC_Init( int SoundCard, int Address ) {
 }
 
 void  MUSIC_Continue( void ) {
-    printf("MUSIC_Continue\n");
     Mix_ResumeMusic();
 }
 
 void  MUSIC_Pause( void ) {
-    printf("MUSIC_Pause\n");
     Mix_PauseMusic();
 }
 
@@ -495,24 +494,22 @@ int   MUSIC_SongPlaying( void ) {
 }
 
 int   MUSIC_StopSong( void ) {
-    printf("MUSIC_StopSong\n");
     Mix_HaltMusic();
     return 0;
 }
 
 int   MUSIC_PlaySong( unsigned char *song, int song_len, int loopflag ) {
-    printf("MUSIC_PlaySong %d bytes, loop: %d\n", song_len, loopflag);
     SDL_RWops *rw = SDL_RWFromMem(song, song_len);
     if (!rw) {
         printf("SDL_RWFromMem: %s\n", SDL_GetError());
         abort();
     }
-    Mix_Music * music = Mix_LoadMUS_RW(rw, 1);
-    if (!music) {
+    sdl_music = Mix_LoadMUS_RW(rw, 1);
+    if (!sdl_music) {
         printf("Mix_LoadMUS_RW: %s\n", SDL_GetError());
         abort();
     }
-    if (Mix_PlayMusic(music, loopflag) != 0) {
+    if (Mix_PlayMusic(sdl_music, loopflag) != 0) {
         printf("Mix_PlayMusic: %s\n", SDL_GetError());
         abort();
     }
@@ -520,7 +517,8 @@ int   MUSIC_PlaySong( unsigned char *song, int song_len, int loopflag ) {
 }
 
 int   MUSIC_FadeVolume( int tovolume, int milliseconds ) {
-    printf("MUSIC_FadeVolume %d %d\n", tovolume, milliseconds);
+    printf("MUSIC_FadeVolume STUB %d %d\n", tovolume, milliseconds);
+    MUSIC_SetVolume(tovolume);
     return 0;
 }
 
@@ -566,34 +564,117 @@ int   PCFX_Stop( int handle ) {
 }
 
 int   PCFX_SoundPlaying( int handle ) {
-    printf("PCFX_SoundPlaying %d\n", handle);
-    return 0;
+    return Mix_Playing(handle) > 0;
 }
 
 int FX_SoundActive( int handle ) {
-    printf("PCFX_SoundActive %d\n", handle);
-    return 0;
+    int r = Mix_Playing(handle);
+    return r > 0;
 }
 
 int FX_SetPan( int handle, int vol, int left, int right ) {
-    printf("FX_SetPan %d %d %d %d\n", handle, vol, left, right);
+    Mix_SetPanning(handle, left, right);
+    Mix_Volume(handle, vol * MIX_MAX_VOLUME / 255);
     return 0;
 }
 
 int FX_SetPitch( int handle, int pitchoffset ) {
     printf("FX_SetPitch %d %d\n", handle, pitchoffset);
+    return 0;
 }
 
+#define MAX_FX_HANDLES (8)
+
+struct fx_handle {
+    Mix_Chunk *chunk;
+    Uint8 *buf;
+    int priority;
+};
+
+static struct fx_handle fx_handles[MAX_FX_HANDLES];
+
+static int FX_FindFreeHandle() {
+    int candidates[MAX_FX_HANDLES];
+    int candidates_n = 0;
+    int candidate_prio = -1;
+    for(int i = 0; i < MAX_FX_HANDLES; ++i) {
+        struct fx_handle *fx = fx_handles + i;
+        if (fx->chunk) {
+            if (candidate_prio == -1 || fx->priority < candidate_prio) {
+                candidates_n = 0;
+                candidates[candidates_n++] = i;
+                candidate_prio = fx->priority;
+            } else if (fx->priority == candidate_prio) {
+                candidates[candidates_n++] = i;
+            }
+        } else {
+            printf("Allocated channel handle %d\n", i);
+            return i;
+        }
+    }
+    int idx = candidates[rand() % candidates_n];
+    printf("no free channels, evicting one of %u candidate -> %d\n", candidates_n, idx);
+    FX_StopSound(idx);
+    return idx;
+}
 
 int FX_PlayRaw( char *ptr, unsigned long length, unsigned rate,
        int pitchoffset, int vol, int left, int right, int priority,
        unsigned long callbackval ) {
-    printf("FX_PlayRaw\n");
-    return 0;
+    printf("FX_PlayRaw len: %lu rate: %u pitch: %d vol: %d left: %d right:%d prio: %d\n", 
+        length, rate, pitchoffset, vol, left, right, priority);
+    int idx = FX_FindFreeHandle();
+    if (idx < 0)
+        return idx;
+
+    SDL_AudioCVT cvt;
+    int r = SDL_BuildAudioCVT(&cvt, AUDIO_U8, 1, rate, AUDIO_S16, 1, MIX_DEFAULT_FREQUENCY);
+    if (r < 0) {
+        printf("SDL_BuildAudioCVT: %s\n", SDL_GetError());
+        abort();
+    }
+    if (r > 0) {
+        cvt.buf = (Uint8*)malloc(length * cvt.len_mult);
+        memcpy(cvt.buf, ptr, length);
+        if (!cvt.buf) {
+            perror("malloc");
+            return -1;
+        }
+        cvt.len = length;
+        if (SDL_ConvertAudio(&cvt) < 0) {
+            printf("SDL_ConvertAudio: %s", SDL_GetError());
+            free(cvt.buf);
+            return -1;
+        }
+    }
+    Mix_Chunk *chunk = Mix_QuickLoad_RAW(cvt.buf, cvt.len_cvt);
+    if (!chunk) {
+        printf("Mix_QuickLoad_RAW: %s\n", SDL_GetError());
+        free(cvt.buf);
+        return -1;
+    }
+
+    fx_handles[idx].buf = cvt.buf;
+    fx_handles[idx].chunk = chunk;
+    fx_handles[idx].priority = priority;
+    Mix_SetPanning(idx, left, right);
+    Mix_PlayChannel(idx, chunk, 0);
+    return idx;
 }
 
 int FX_StopSound( int handle ) {
     printf("FX_StopSound %d\n", handle);
+    assert(handle < MAX_FX_HANDLES);
+    struct fx_handle * fx = fx_handles + handle;
+    if (!fx->chunk) {
+        printf("No FX chunk\n");
+        return -1;
+    }
+    Mix_FreeChunk(fx->chunk);
+    free(fx->buf);
+    fx->chunk = 0;
+    fx->buf = 0;
+    fx->priority = 0;
     return 0;
 }
 
@@ -602,11 +683,11 @@ int   FX_GetBlasterSettings( fx_blaster_config *blaster ) {
 }
 
 int AL_DetectFM(void) {
-    return 0;
+    return 1;
 }
 
 int MPU_Init(int addr) {
-    return 0;
+    return 1;
 }
 
 int   FX_SetupSoundBlaster( fx_blaster_config blaster, int *MaxVoices, int *MaxSampleBits, int *MaxChannels ) {
