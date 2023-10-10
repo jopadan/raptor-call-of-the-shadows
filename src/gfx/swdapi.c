@@ -290,7 +290,20 @@ INT ly                     // INPUT : height of field
 
    GLB_FreeItem ( item );
 }
-  
+
+PRIVATE INT SWD_GetWindowIndex ( SWIN *win ) {
+   for(INT i = 0; i != MAX_WINDOWS; ++i) {
+      if (g_wins[i].win == win)
+         return i;
+   }
+   EXIT_Error("SWD_GetWindowIndex: can't find window %p\n", win);
+}
+
+PRIVATE INT SWD_GetFieldIndex ( SWIN * curwin, SFIELD * curfld ) {
+   SFIELD   *  first         = (SFIELD *)( ( ( BYTE *)curwin ) + curwin->fldofs );
+   return curfld - first;
+}
+
 /*------------------------------------------------------------------------
   SWD_PutField() - puts a field in displaybuffer
   ------------------------------------------------------------------------*/
@@ -300,6 +313,8 @@ SWIN * curwin,             // INPUT : pointer to window data
 SFIELD * curfld            // INPUT : pointer to field data
 )
 {
+   INT         win_index   = SWD_GetWindowIndex(curwin);
+   INT         fld_index   = SWD_GetFieldIndex(curwin, curfld);
    VOID *      fld_font    = GLB_GetItem ( curfld->fontid );
    CHAR *      fld_text    = ( ( CHAR * )curfld ) + curfld->txtoff;
    INT         fontheight  = ((FONT *)fld_font)->height;
@@ -325,8 +340,8 @@ SFIELD * curfld            // INPUT : pointer to field data
       text_y++;
    }
   
-   if ( curfld->saveflag && curfld->sptr )
-      GFX_PutImage ( curfld->sptr, fld_x, fld_y, FALSE );
+   if ( curfld->saveflag && g_wins[win_index].sptr[fld_index] )
+      GFX_PutImage ( g_wins[win_index].sptr[fld_index], fld_x, fld_y, FALSE );
   
    if ( curfld->picflag != FILL && curfld->picflag != INVISABLE )
    {
@@ -1193,7 +1208,8 @@ VOID * inptr               // INPUT : pointer to window data
 )
 {
    SWIN     *  header      = (SWIN *)inptr;
-   SFIELD   *  fld;
+   INT         win_idx     = SWD_GetWindowIndex(header);
+   SFIELD   *  fld         = (SFIELD *)( ( ( BYTE *)inptr ) + header->fldofs );
    INT         numflds     = 0;
    INT         loop;
    INT         fx;
@@ -1201,17 +1217,16 @@ VOID * inptr               // INPUT : pointer to window data
    BYTE     *  picdata;
    GFX_PIC   *  pich;
   
-   for ( loop = 0; loop < header->numflds; loop++, numflds++ )
+   for ( loop = 0; loop < header->numflds; loop++, fld++, numflds++ )
    {
-      fld = (SFIELD *)( ( ( BYTE *)inptr ) + header->fldofs + loop * (sizeof(SFIELD) - sizeof(BYTE *) + sizeof(DWORD)) );
       if ( fld->opt != FLD_OFF )
       {
          fx = header->x + fld->x;
          fy = header->y + fld->y;
   
-         if ( fld->saveflag && fld->sptr )
+         if ( fld->saveflag && g_wins[win_idx].sptr[loop] )
          {
-            picdata = ( BYTE * ) fld->sptr;
+            picdata = ( BYTE * ) g_wins[win_idx].sptr[loop];
             pich = ( GFX_PIC * )picdata;
             picdata += sizeof ( GFX_PIC );
             pich->width = (short)fld->lx;
@@ -1477,6 +1492,7 @@ DWORD   handle                // INPUT : GLB Item Number
             header->item = GLB_GetItemID ( header->item_name );
             GLB_LockItem ( header->item );
          }
+         g_wins[rec_num].sptr = calloc(sizeof(BYTE *), header->numflds);
   
          for ( loop = 0; loop < header->numflds ; loop++ , curfld++ )
          {
@@ -1523,7 +1539,7 @@ DWORD   handle                // INPUT : GLB Item Number
                   GLB_LockItem ( curfld->item );
                }
   
-               curfld->sptr = NUL;
+               g_wins[rec_num].sptr[loop] = NUL;
                if ( curfld->saveflag )
                {
                   pic_size = ( curfld->lx * curfld->ly ) + sizeof ( GFX_PIC );
@@ -1532,8 +1548,8 @@ DWORD   handle                // INPUT : GLB Item Number
                      EXIT_Error ("SWD Error: pic save to big...");
                   }
   
-                  curfld->sptr = (BYTE *) malloc ( pic_size );
-                  if ( !curfld->sptr )
+                  g_wins[rec_num].sptr[loop] = (BYTE *) malloc ( pic_size );
+                  if ( !g_wins[rec_num].sptr[loop] )
                      EXIT_Error ("SWD Error: out of memory");
                }
             }
@@ -1775,10 +1791,12 @@ INT handle                 // INPUT : handle of window
       if ( curfld->fontid != EMPTY )
          GLB_FreeItem ( curfld->fontid );
 
-      if ( curfld->saveflag && curfld->sptr != NUL )
-         free ( curfld->sptr );
+      if ( curfld->saveflag && g_wins[handle].sptr[loop] != NUL )
+         free ( g_wins[handle].sptr[loop] );
    }
-  
+
+   free(g_wins[handle].sptr);
+
    if ( curwin->item != EMPTY )
       GLB_FreeItem ( curwin->item );
   

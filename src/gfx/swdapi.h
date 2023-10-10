@@ -127,7 +127,7 @@ typedef struct
    INT      lx             ;  // WIDTH IN PIXELS
    INT      ly             ;  // HEIGHT IN PIXELS
    DWORD    txtoff         ;  // OFFSET TO TEXT DATA ( BYTES )
-   BYTE  *  sptr           ;  // SEG POINTER TO SAVE INFO
+   DWORD    sptr           ;  // SEG POINTER TO SAVE INFO
 } __attribute__((packed)) SFIELD;
 
 typedef struct
@@ -164,6 +164,7 @@ typedef struct
    BOOL           flag     ;  // TRUE = in use ,FALSE = not in use
    BOOL           viewflag ;  // TRUE = has viewarea(s) FALSE = none
    SWIN  *        win      ;  // POINTER TO WINDOW
+   BYTE  **       sptr     ;  // SPTR POINTER
 } SWD_WIN;
 
 typedef struct
