@@ -134,7 +134,18 @@ INT     height,            // INPUT : height of character
 INT     addx,              // INPUT : addx offset
 INT     color              // INPUT : base color
 ) {
-    printf("GFX_DrawChar %d %d %d %d\n", width, height, addx, color);
+    while(height--) {
+        INT w = width;
+        while(w--) {
+            BYTE v = *inmem++;
+            if (v)
+                *dest++ = color + v;
+            else
+                ++dest;
+        }
+        inmem += addx;
+        dest += SCREENWIDTH - width;
+    }
 }
 
 VOID
