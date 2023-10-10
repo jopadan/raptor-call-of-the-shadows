@@ -101,7 +101,15 @@ GFX_DrawSprite (
 BYTE * dest, 
 BYTE * inmem 
 ) {
-    printf("GFX_DrawSprite\n");
+    while(1) {
+        WORD offset = inmem[8] | ((WORD) inmem[9] << 8);
+        if (offset == 0xffffu)
+            break;
+        WORD size = inmem[12] | ((WORD) inmem[13] << 8);
+        inmem += 16;
+        memcpy(dest + offset, inmem, size);
+        inmem += size;
+    }
 }
 
 VOID __cdecl
