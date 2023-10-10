@@ -1193,7 +1193,7 @@ VOID * inptr               // INPUT : pointer to window data
 )
 {
    SWIN     *  header      = (SWIN *)inptr;
-   SFIELD   *  fld         = (SFIELD *)( ( ( BYTE *)inptr ) + header->fldofs );
+   SFIELD   *  fld;
    INT         numflds     = 0;
    INT         loop;
    INT         fx;
@@ -1201,8 +1201,9 @@ VOID * inptr               // INPUT : pointer to window data
    BYTE     *  picdata;
    GFX_PIC   *  pich;
   
-   for ( loop = 0; loop < header->numflds; loop++, fld++, numflds++ )
+   for ( loop = 0; loop < header->numflds; loop++, numflds++ )
    {
+      fld = (SFIELD *)( ( ( BYTE *)inptr ) + header->fldofs + loop * (sizeof(SFIELD) - sizeof(BYTE *) + sizeof(DWORD)) );
       if ( fld->opt != FLD_OFF )
       {
          fx = header->x + fld->x;
