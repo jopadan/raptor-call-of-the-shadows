@@ -27,6 +27,7 @@ add_library(rapcore STATIC
     gfx/kbdapi.c
     gfx/prefapi.c
     gfx/ptrapi.c
+    gfx/ptrapi_a.c
     gfx/swdapi.c
     gfx/tsmapi.c
     gfx/vmemapi.c

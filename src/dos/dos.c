@@ -116,7 +116,7 @@ int int386x( int inter_no,
                     printf("int 0x10: SetVideoMode 0x%02x\n", in_regs->h.al);
                     if (in_regs->h.al == 0x13) {
                         assert(sdl_window == NULL);
-                        sdl_window = SDL_CreateWindow("RAPTOR: Call Of The Shadows V1.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320 * zoom, 240 * zoom, 0);
+                        sdl_window = SDL_CreateWindow("RAPTOR: Call Of The Shadows V1.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320 * zoom, 200 * zoom, 0);
                         if (!sdl_window) {
                             printf("SDL_CreateWindow: %s", SDL_GetError());
                             abort();
@@ -167,9 +167,7 @@ int int386x( int inter_no,
                     break;
                 case 0x0c: {
                     assert(sregs != NULL);
-                    printf("MOUSE HANDLER %08x %04x\n", in_regs->x.edx, sregs->es);
                     mouse_handler = (VOID (*)(INT, INT, INT))FP_PTR(in_regs->x.edx, sregs->es);
-                    printf("MOUSE HANDLER SET TO %p\n", mouse_handler);
                     break;
                 }
                 default:
@@ -396,61 +394,6 @@ int chsize( int handle, long size ) {
 
 char * ltoa(long l, char * buffer, int radix) {
     return SDL_itoa(l, buffer, radix);
-}
-
-//GFX
-
-/*==========================================================================
-; PTR_Save() - Saves screen before a cursor draw
- ==========================================================================*/
-VOID
-PTR_Save (
-VOID
-) {
-    printf("PTR_Save\n");
-}
-
-/*==========================================================================
-; PTR_ClipSave() - Saves screen before a cursor draw
- ==========================================================================*/
-VOID
-PTR_ClipSave (
-VOID
-) {
-    printf("PTR_ClipSave\n");
-}
-
-/*==========================================================================
-; PTR_Erase() - Erases cursor and clips edges of screen
- ==========================================================================*/
-VOID
-PTR_Erase (
-VOID
-) {
-    printf("PTR_Erase\n");
-}
-
-/*==========================================================================
-; PTR_ClipErase() - Erases cursor and clips edges of screen
- ==========================================================================*/
-VOID
-PTR_ClipErase (
-VOID
-) {
-    printf("PTR_ClipErase\n");
-}
-/*==========================================================================
-; PTR_Draw() - Draws Cursor
- ==========================================================================*/
-VOID
-PTR_Draw (
-VOID
-) {
-    printf("PTF_Draw\n");
-}
-
-VOID PTR_ReadJoyStick (VOID) {
-    printf("PTR_ReadJoyStick\n");
 }
 
 //TSAPI
