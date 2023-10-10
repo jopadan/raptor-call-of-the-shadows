@@ -544,14 +544,14 @@ SFIELD * curfld            // INPUT : pointer to field data
 
       if ( curfld->bstatus == DOWN )
       {
-         if ( h->type == GSPRITE && h )
+         if ( h && h->type == GSPRITE )
             GFX_ShadeShape ( DARK, (BYTE*)h, fld_x, fld_y );
          else
             GFX_ShadeArea ( DARK, fld_x, fld_y, curfld->lx, curfld->ly );
       }
       else if ( curfld->bstatus == UP )
       {
-         if ( h->type == GSPRITE && h )
+         if ( h && h->type == GSPRITE )
             GFX_ShadeShape ( LIGHT, (BYTE*)h, fld_x, fld_y );
          else
             GFX_ShadeArea ( LIGHT, fld_x, fld_y, curfld->lx, curfld->ly );
