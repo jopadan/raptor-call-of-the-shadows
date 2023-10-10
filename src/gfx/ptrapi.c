@@ -672,7 +672,7 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
    CHAR * err = "PTR_Init() - DosMemAlloc";
    struct SREGS sregs;
    union REGS   regs;
-   int (far *function_ptr)();
+   VOID (far *function_ptr)(INT, INT, INT);
    INT rval = 0;
    uintptr_t segment;
 
@@ -702,7 +702,7 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
       regs.w.ax = 0;
       int386(0x33, &regs, &regs);
   
-      if ( regs.w.ax == -1 )
+      if ( (SHORT)regs.w.ax == -1 )
       {
          mousepresent = TRUE;
 
@@ -714,8 +714,8 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
          function_ptr = PTR_MouseHandler;
          regs.w.ax = 0x0C;
          regs.w.cx = LB_OFF | LB_PRESS | RB_OFF | RB_PRESS | MOUSE_MV;
-         regs.x.edx = FP_OFF( function_ptr );
-         sregs.es   = FP_SEG( function_ptr );
+         regs.x.edx = FP_OFF( (uintptr_t)function_ptr );
+         sregs.es   = FP_SEG( (uintptr_t)function_ptr );
          int386x ( 0x33, &regs, &regs, &sregs );
       }
    }

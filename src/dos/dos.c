@@ -37,8 +37,24 @@ typedef void (*_dos_int_handler)();
 static _dos_int_handler int_handlers[256];
 static uint8_t kbd_code[2];
 static uint8_t kbd_code_r = 0;
+VOID (*mouse_handler)(INT, INT, INT) = NULL;
 
 uint8_t _dos_video_ram[0x12c00];
+
+uint32_t FP_OFF(uintptr_t ptr) {
+    assert((ptr >> 48) == 0);
+    return ptr;
+}
+
+uint16_t FP_SEG(uintptr_t ptr) {
+    assert((ptr >> 48) == 0);
+    return ptr >> 32;
+}
+
+uintptr_t FP_PTR(uint32_t ptr, uint16_t seg) {
+    return ptr | ((uintptr_t)seg << 32);
+}
+
 
 int _dpmi_dosalloc(unsigned short size, uintptr_t *segment) {
     size *= 16;
@@ -87,10 +103,9 @@ int rap_random(int x) {
 void _disable(void) {}
 void _enable(void) {}
 
-int int386( int inter_no,
+int int386x( int inter_no,
             const union REGS *in_regs,
-            union REGS *out_regs ) {
-    printf("INT386 %02x ah=%02x\n", inter_no, in_regs->h.ah);
+            union REGS *out_regs, struct SREGS *sregs ) {
     *out_regs = *in_regs;
     switch(inter_no)
     {
@@ -133,24 +148,47 @@ int int386( int inter_no,
             }
             break;
         case 0x33:
-            switch(in_regs->h.ah)
+            switch(in_regs->w.ax)
             {
-                case 0x00: {
+                case 0x00:
                     printf("int 0x33: GetMouseInfo\n");
-                    out_regs->w.ax = 0;
+                    out_regs->w.ax = 0xffffu;
                     out_regs->w.bx = 3;
+                    break;
+                case 0x01:
+                    SDL_ShowCursor(SDL_ENABLE);
+                    break;
+                case 0x02:
+                    SDL_ShowCursor(SDL_DISABLE);
+                    break;
+                case 0x04:
+                    if (sdl_window)
+                        SDL_WarpMouseInWindow(sdl_window, in_regs->w.cx * zoom, in_regs->w.dx * zoom);
+                    break;
+                case 0x0c: {
+                    assert(sregs != NULL);
+                    printf("MOUSE HANDLER %08x %04x\n", in_regs->x.edx, sregs->es);
+                    mouse_handler = (VOID (*)(INT, INT, INT))FP_PTR(in_regs->x.edx, sregs->es);
+                    printf("MOUSE HANDLER SET TO %p\n", mouse_handler);
                     break;
                 }
                 default:
+                    printf("int 0x33: ax = %04x\n", in_regs->w.ax);
                     abort();
             }
             break;
         default:
+            printf("int 0x33: ah=%02x\n", in_regs->h.ah);
             abort();
     }
     return out_regs->x.eax;
 }
 
+int int386( int inter_no,
+            const union REGS *in_regs,
+            union REGS *out_regs) {
+    return int386x(inter_no, in_regs, out_regs, NULL);
+}
 
 uint8_t _dos_keycode(uint8_t code, bool release) {
     return code | (release? 0x80: 0x00);
@@ -190,17 +228,32 @@ void _dos_update_screen() {
         return;
 
     SDL_Event event;
+    bool callMouseHandler = true;
     while(SDL_PollEvent(&event)) {
         switch(event.type) {
         case SDL_KEYDOWN:
         case SDL_KEYUP:
             _dos_translate_key(event.key.keysym.scancode, event.type == SDL_KEYUP);
             break;
+        case SDL_MOUSEMOTION:
+        case SDL_MOUSEBUTTONUP:
+        case SDL_MOUSEBUTTONDOWN:
+            callMouseHandler = true;
+            break;
         case SDL_QUIT:
             printf("Quit requested\n");
             exit(0);
             break;
         }
+    }
+    if (callMouseHandler && mouse_handler) {
+        int x, y;
+        Uint32 buttons = SDL_GetMouseState(&x, &y);
+        INT dos_buttons =
+            ((buttons & SDL_BUTTON_LMASK)? 1: 0) |
+            ((buttons & SDL_BUTTON_RMASK)? 2: 0) |
+            ((buttons & SDL_BUTTON_MMASK)? 4: 0);
+        mouse_handler(dos_buttons, x * 2 / zoom, y / zoom);
     }
     if (palette_updated) {
         SDL_Color colors[256];

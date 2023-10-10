@@ -25,6 +25,8 @@
 #include "wingame.inc"
 #include "opts.inc"
 
+#include "dos.h"
+
 extern BOOL   godmode;
 
 #define HANGAR_MISSION   0
@@ -2118,6 +2120,7 @@ VOID
       }
    }
 
+   _dos_update_screen();
    goto mainloop;
   
    menu_exit:

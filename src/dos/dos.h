@@ -84,6 +84,13 @@ void _enable(void);
 int int386( int inter_no,
             const union REGS *in_regs,
             union REGS *out_regs );
+int int386x( int inter_no,
+            const union REGS *in_regs,
+            union REGS *out_regs, struct SREGS * sregs);
+
+uint32_t FP_OFF(uintptr_t ptr);
+uint16_t FP_SEG(uintptr_t ptr);
+uintptr_t FP_PTR(uint32_t ptr, uint16_t seg);
 
 int inp(
    unsigned short port
