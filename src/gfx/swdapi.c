@@ -2304,7 +2304,7 @@ SWD_DLG * swd_dlg          // OUTPUT: pointer to info structure
                lastfld = 0;
             }
             GFX_DisplayUpdate();
-            while ( SWD_IsButtonDown() );
+            while ( SWD_IsButtonDown() ) _dos_process_events();
             if ( kbactive || curfld->kbflag )
                curfld->bstatus = UP;
             else

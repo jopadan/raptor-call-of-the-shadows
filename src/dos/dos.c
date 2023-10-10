@@ -219,12 +219,8 @@ void _dos_translate_key(SDL_Scancode code, bool release) {
         int_handlers[9]();
 }
 
-
-void _dos_update_screen() {
-    printf("_dos_update_screen\n");
-    if (!sdl_window)
-        return;
-
+void _dos_process_events() {
+    printf("_dos_process_events\n");
     SDL_Event event;
     bool callMouseHandler = true;
     while(SDL_PollEvent(&event)) {
@@ -253,6 +249,14 @@ void _dos_update_screen() {
             ((buttons & SDL_BUTTON_MMASK)? 4: 0);
         mouse_handler(dos_buttons, x * 2 / zoom, y / zoom);
     }
+}
+
+void _dos_update_screen() {
+    printf("_dos_update_screen\n");
+    _dos_process_events();
+    if (!sdl_window)
+        return;
+
     if (palette_updated) {
         SDL_Color colors[256];
         const BYTE *src = palette;

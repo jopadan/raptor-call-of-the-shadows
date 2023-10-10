@@ -1925,6 +1925,8 @@ BOOL  startflag
 {
    INT            local_cnt;
 
+    _dos_process_events();
+
    if ( startflag )
    {
       d_count = 0;

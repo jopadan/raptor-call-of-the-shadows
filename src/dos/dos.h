@@ -111,6 +111,7 @@ extern uint8_t _dos_video_ram[];
 
 int strcmpi(const char *, const char *);
 
+void _dos_process_events();
 void _dos_update_screen();
 
 #endif
