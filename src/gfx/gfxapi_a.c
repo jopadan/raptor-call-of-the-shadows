@@ -32,7 +32,10 @@ BYTE * outmem,             // INPUT : EAX pointer to destination
 INT    maxlen,             // INPUT : EDX length of buffer to shade
 BYTE * dtable              // INPUT : EBX pointer to shade table
 ) {
-    printf("GFX_Shade\n");
+    while(maxlen--) {
+        BYTE v = *outmem;
+        *outmem++ = dtable[v];
+    }
 }
 
 VOID  
@@ -62,7 +65,17 @@ BYTE * dest,
 BYTE * inmem, 
 BYTE * dtable
 ) {
-    printf("GFX_ShadeSprite\n");
+    while(1) {
+        DWORD offset = inmem[8] | ((WORD) inmem[9] << 8);
+        if (offset == 0xffffu)
+            break;
+        WORD size = inmem[12] | ((WORD) inmem[13] << 8);
+        inmem += 16;
+        for(DWORD i = offset; i != offset + size; ++i) {
+            dest[i] = dtable[dest[i]];
+        }
+        inmem += size;
+    }
 }
 
 VOID __cdecl
