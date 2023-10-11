@@ -811,14 +811,17 @@ int   MUSIC_PlaySong( unsigned char *song, int song_len, int loopflag ) {
 }
 
 int   MUSIC_FadeVolume( int tovolume, int milliseconds ) {
+    if (tovolume == 0) {
+        Mix_FadeOutMusic(milliseconds);
+        return 0;
+    }
     printf("MUSIC_FadeVolume STUB %d %d\n", tovolume, milliseconds);
     MUSIC_SetVolume(tovolume);
     return 0;
 }
 
 int   MUSIC_FadeActive( void ) {
-    printf("MUSIC_FadeActive\n");
-    return 0;
+    return Mix_FadingMusic() != MIX_NO_FADING;
 }
 
 int   MUSIC_Shutdown( void ) {
