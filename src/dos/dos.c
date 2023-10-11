@@ -477,7 +477,16 @@ void _dos_process_events() {
         switch(event.type) {
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-            _dos_translate_key(event.key.keysym.scancode, event.type == SDL_KEYUP);
+            if (event.key.keysym.sym == SDLK_f && event.key.keysym.mod & KMOD_LCTRL) {
+                if (event.type == SDL_KEYDOWN) {
+                    Uint32 flags = SDL_GetWindowFlags(sdl_window);
+                    if (flags & SDL_WINDOW_FULLSCREEN)
+                        SDL_SetWindowFullscreen(sdl_window, 0);
+                    else
+                        SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                }
+            } else
+                _dos_translate_key(event.key.keysym.scancode, event.type == SDL_KEYUP);
             break;
         case SDL_MOUSEMOTION:
         case SDL_MOUSEBUTTONUP:
