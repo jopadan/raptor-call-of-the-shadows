@@ -27,7 +27,7 @@ static SDL_Renderer * sdl_renderer = NULL;
 static SDL_Surface * sdl_surface = NULL;
 static SDL_Palette * sdl_palette = NULL;
 static Mix_Music * sdl_music = NULL;
-static int zoom = 3;
+static int zoom = 4;
 static uint8_t palette[0x300];
 static bool palette_updated = FALSE;
 static unsigned palette_index_r = 0;
