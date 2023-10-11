@@ -55,7 +55,7 @@ VOID (*SD)(INT)           // INPUT : pointer to function
  ***************************************************************************/
 VOID
 EXIT_Error(
-char *instr,               // INPUT : message string ot format
+const char *instr,               // INPUT : message string ot format
 ...                        // INPUT : args for instr
 );
   
