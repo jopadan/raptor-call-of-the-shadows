@@ -447,7 +447,7 @@ INI_PutPreferenceHex(
       return(0);
    }
 
-   sprintf ( buffer, "%x", val );
+   sprintf ( buffer, "%lx", val );
 
    return( INI_PutPreference( section, option, buffer ) );
 }
