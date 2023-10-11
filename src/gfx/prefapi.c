@@ -335,7 +335,7 @@ INI_GetPreferenceHex(
 
     ltoa( def, Def, 10 );
     INI_GetPreference( section, option, buffer, sizeof( buffer ), Def );
-    sscanf( buffer, "%x", &def );
+    sscanf( buffer, "%lx", &def );
     return ( def );
 }
 
