@@ -952,6 +952,7 @@ VOID
 
    for (;;)
    {
+      _dos_process_events();
       SHADOW_Clear();
   
       IPT_MovePlayer();
