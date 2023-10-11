@@ -1,17 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-  
+
 #include "raptor.h"
-  
+
 #include "file0000.inc"
 #include "file0001.inc"
 #include "file0002.inc"
 #include "file0003.inc"
 #include "file0004.inc"
-  
+
 FRAME frm[40];
-  
+
+void _dos_update_screen();
+
 /***************************************************************************
 INTRO_City () - Shows City with planes flying into it
  ***************************************************************************/
@@ -24,7 +26,7 @@ VOID
    INT maxframes  = 30;
    INT framecnt   = maxframes - 1;
    FRAME * cur    = frm;
-  
+
    for ( loop = 0; loop < maxframes; loop++, cur++ )
    {
       cur->holdframe       = 0;
@@ -58,20 +60,20 @@ VOID
          cur->fx_xpos = 100;
       }
    }
-  
+
    cur    = frm;
-  
+
    cur->startf = M_FADEIN;
    cur->startsteps = 128;
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
 
    SND_StopPatches();
-  
+
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_Side1 () - Show Side OF Player ship going thru city
  ***************************************************************************/
@@ -84,7 +86,7 @@ VOID
    INT maxframes  = 20;
    INT framecnt   = maxframes - 1;
    FRAME * cur    = frm;
-  
+
    MOVIE_BPatch ( FX_JETSND );
 
    for ( loop = 0; loop < maxframes; loop++, cur++ )
@@ -108,13 +110,13 @@ VOID
       cur->fx_xpos         = 127;
       cur->soundfx         = EMPTY;
    }
-  
+
    if  ( MOVIE_Play ( frm, 2, palette ) == K_SKIPALL )
       return ( TRUE );
-  
+
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_Pilot () - Shows Pilots Face with lights moving thru
  ***************************************************************************/
@@ -127,7 +129,7 @@ VOID
    INT maxframes  = 21;
    INT framecnt   = maxframes - 1;
    FRAME * cur    = frm;
-  
+
    MOVIE_BPatch ( FX_IJETSND );
 
    for ( loop = 0; loop < maxframes; loop++, cur++ )
@@ -151,13 +153,13 @@ VOID
       cur->fx_vol          = 127;
       cur->fx_xpos         = 127;
    }
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
-  
+
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_Explosion () - Bad Guy Blowing UP
  ***************************************************************************/
@@ -170,7 +172,7 @@ VOID
    INT maxframes  = 22;
    INT framecnt   = maxframes - 1;
    FRAME * cur    = frm;
-  
+
    MOVIE_BPatch ( FX_EJETSND );
 
    for ( loop = 0; loop < maxframes; loop++, cur++ )
@@ -204,7 +206,7 @@ VOID
          if ( loop & 1 )
             cur->soundfx         = FX_AIREXPLO;
    }
-  
+
    cur--;
    cur->soundfx   = FX_AIREXPLO;
    cur->endf      = M_FADEOUT;
@@ -213,13 +215,13 @@ VOID
    cur->blue      = 3;
    cur->endsteps  = 60;
    cur++;
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
 
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_Side2 () - Plaer Side flying thru city Shooting
  ***************************************************************************/
@@ -233,7 +235,7 @@ VOID
    INT framecnt   = maxframes - 1;
    FRAME * cur    = frm;
    INT opt;
-  
+
    MOVIE_BPatch ( FX_JETSND );
 
    for ( loop = 0; loop < maxframes; loop++, cur++ )
@@ -258,18 +260,18 @@ VOID
       cur->fx_xpos         = 127;
       cur->soundfx         = EMPTY;
    }
-  
+
    opt = MOVIE_Play ( frm, 1, palette );
-  
+
    if ( opt == K_SKIPALL )
       return ( TRUE );
-  
+
    if ( opt == K_NEXTFRAME )
       return ( FALSE );
-  
+
    framecnt = maxframes - 1;
    cur      = frm;
-  
+
    for ( loop = 0; loop < maxframes; loop++, cur++ )
    {
       cur->holdframe       = 0;
@@ -292,16 +294,16 @@ VOID
       if ( loop > 1 )
          cur->soundfx      = FX_INTROGUN;
    }
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
 
    SND_StopPatches();
-  
+
    return ( FALSE );
 }
-  
-  
+
+
 /***************************************************************************
 INTRO_Base() - Base Landing at sunset
  ***************************************************************************/
@@ -314,7 +316,7 @@ VOID
    INT maxframes  = 30;
    INT framecnt   = maxframes - 1;
    FRAME * cur    = frm;
-  
+
    if ( !GAME2 )
       return ( TRUE );
 
@@ -338,18 +340,18 @@ VOID
       cur->soundfx         = EMPTY;
       cur++;
    }
-  
+
    cur    = frm;
-  
+
    cur->startf = M_FADEIN;
    cur->startsteps = 128;
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
-  
+
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_Landing () - Ship Landing on Base
  ***************************************************************************/
@@ -362,7 +364,7 @@ VOID
    INT maxframes  = 33;
    INT framecnt   = maxframes - 1;
    FRAME * cur    = frm;
-  
+
    for ( loop = 0; loop < maxframes; loop++ )
    {
       cur->holdframe       = 0;
@@ -383,19 +385,19 @@ VOID
       cur->soundfx         = EMPTY;
       cur++;
    }
-  
+
    cur--;
    cur->startf      = M_FADEOUT;
    cur->startsteps  = 64;
    cur->endf        = M_PALETTE;
    cur->endsteps    = 64;
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
-  
+
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_Death2 () - Ground Death Scene
  ***************************************************************************/
@@ -408,7 +410,7 @@ VOID
    INT      maxframes  = 6;
    INT      framecnt   = maxframes - 1;
    FRAME *  cur        = frm;
-  
+
    for ( loop = 0; loop < maxframes; loop++, cur++ )
    {
       cur->holdframe       = 0;
@@ -428,10 +430,10 @@ VOID
       cur->songstep        = 0;
       cur->soundfx         = EMPTY;
    }
-  
+
    if  ( MOVIE_Play ( frm, 8, palette ) == K_SKIPALL )
       return ( TRUE );
- 
+
    GFX_FadeOut ( 0, 0, 0, 100 );
 
    memset ( displaybuffer, 0, 64000 );
@@ -453,7 +455,7 @@ VOID
    INT      maxframes  = 30;
    INT      framecnt   = maxframes - 1;
    FRAME *  cur        = frm;
-  
+
    for ( loop = 0; loop < maxframes; loop++, cur++ )
    {
       cur->holdframe       = 0;
@@ -473,10 +475,10 @@ VOID
       cur->songstep        = 0;
       cur->soundfx         = EMPTY;
    }
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
- 
+
    return ( FALSE );
 }
 
@@ -506,7 +508,7 @@ VOID
    INT      maxframes  = 5;
    INT      framecnt   = maxframes - 1;
    FRAME *  cur        = frm;
-  
+
    for ( loop = 0; loop < maxframes; loop++, cur++ )
    {
       cur->holdframe       = 0;
@@ -527,10 +529,10 @@ VOID
       cur->soundfx         = EMPTY;
 
    }
-  
+
    if  ( MOVIE_Play ( frm, 8, palette ) == K_SKIPALL )
       return ( TRUE );
- 
+
    GFX_FadeOut ( 0, 0, 0, 120 );
 
    memset ( displaybuffer, 0, 64000 );
@@ -554,7 +556,7 @@ VOID
    INT      maxframes  = 25;
    INT      framecnt   = maxframes - 1;
    FRAME *  cur        = frm;
-  
+
    for ( loop = 0; loop < maxframes; loop++, cur++ )
    {
       cur->holdframe       = 0;
@@ -587,10 +589,10 @@ VOID
       }
 
    }
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
- 
+
    GFX_FadeOut ( 0, 0, 0, 120 );
 
    memset ( displaybuffer, 0, 64000 );
@@ -601,7 +603,7 @@ VOID
 
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_Game3End () - Game 1 Victory
  ***************************************************************************/
@@ -614,7 +616,7 @@ VOID
    INT      maxframes  = 39;
    INT      framecnt   = maxframes - 1;
    FRAME *  cur        = frm;
-  
+
    MOVIE_BPatch ( FX_JETSND );
 
    for ( loop = 0; loop < maxframes; loop++, cur++ )
@@ -649,10 +651,10 @@ VOID
       }
 
    }
-  
+
    if  ( MOVIE_Play ( frm, 1, palette ) == K_SKIPALL )
       return ( TRUE );
- 
+
    GFX_FadeOut ( 0, 0, 0, 120 );
 
    memset ( displaybuffer, 0, 64000 );
@@ -793,11 +795,13 @@ VOID
    }
 
    if ( ( bday_num != EMPTY ) && dig_flag )
-      while ( SND_IsPatchPlaying ( FX_THEME ) );
+      while ( SND_IsPatchPlaying ( FX_THEME ) )
+         _dos_update_screen();
    else
       while ( SND_IsSongPlaying() )
       {
          if ( IMS_IsAck() ) break;
+         _dos_update_screen();
       }
 
    GFX_FadeOut ( 0, 0, 0, 63 );
@@ -850,7 +854,7 @@ VOID
 
    return ( FALSE );
 }
-  
+
 /***************************************************************************
 INTRO_BaseLanding() - BaseLanding PLays all needed MOVES
  ***************************************************************************/
@@ -865,7 +869,7 @@ VOID
    if ( INTRO_Base() ) return;
    if ( INTRO_Landing() ) return;
 }
-  
+
 /***************************************************************************
 INTRO_PlayMain() - Plays Main Intro
  ***************************************************************************/
