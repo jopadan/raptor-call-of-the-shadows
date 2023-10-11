@@ -167,6 +167,7 @@ INT scancode               // SCANCODE see keys.h
 
    for (;;)
    {
+      _dos_process_events();
       if ( ! *ky )
          break;
    }
