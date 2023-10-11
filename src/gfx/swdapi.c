@@ -2415,7 +2415,8 @@ SWD_DLG * swd_dlg          // OUTPUT: pointer to info structure
   
    if ( update )
       GFX_DisplayUpdate();
-   _dos_update_screen();
+   else
+      _dos_update_screen();
 }
   
 /***************************************************************************
