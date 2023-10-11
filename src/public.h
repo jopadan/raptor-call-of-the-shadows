@@ -27,7 +27,7 @@ typedef struct
    SHORT py;
    SHORT playerpic;
    SHORT fil;
-}RECORD;
+} __attribute__((packed)) RECORD;
 
 typedef struct
 {
@@ -42,7 +42,7 @@ typedef struct
    INT         diff[4];                // DIFFICULTY LEVEL
    BOOL        trainflag;
    BOOL        fintrain;
-}PLAYEROBJ;
+} __attribute__((packed)) PLAYEROBJ;
 
 #define             END_DURATION ( 20 * 3 )
 #define             END_EXPLODE  ( 24 )
