@@ -1023,6 +1023,15 @@ int _dos_access(const char *path, int mode) {
     return r;
 }
 
+FILE *_dos_fopen(const char * path, const char *mode) {
+    char *resolved = resolve_path(path, strchr(mode, 'w') || strchr(mode, 'a'));
+    if (!resolved) {
+        errno = ENOENT;
+        return NULL;
+    }
+    return fopen(resolved, mode);
+}
+
 int main(int argc, char **argv) {
     if (SDL_Init(SDL_INIT_EVERYTHING | SDL_INIT_NOPARACHUTE)) {
         printf("SDL_Init: %s\n", SDL_GetError());
