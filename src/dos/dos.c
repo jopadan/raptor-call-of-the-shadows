@@ -1007,6 +1007,8 @@ int   FX_Shutdown( void ) {
 
 void  FX_SetVolume( int volume ) {
     printf("FX_SetVolume %d\n", volume);
+    for(int i = 0; i < MAX_FX_HANDLES; ++i)
+        Mix_Volume(i, volume * MIX_MAX_VOLUME / 255);
 }
 
 extern int _dos_main(int argv, char **argc);
