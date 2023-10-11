@@ -9,7 +9,7 @@
 
 #define TILEWIDTH       32
 #define TILEHEIGHT      32
-#define MAP_LEFT        16;
+#define MAP_LEFT        16
 
 extern INT tileloopy;
 extern BYTE * displaybuffer;
