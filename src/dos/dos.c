@@ -784,10 +784,7 @@ void  MUSIC_SetVolume( int volume ) {
 }
 
 int   MUSIC_SongPlaying( void ) {
-    printf("MUSIC_SongPlaying\n");
-    // FIXME: does not work for midi:
-    // return Mix_PlayingMusic()? 1: 0;
-    return 0;
+    return Mix_PlayingMusic()? 1: 0;
 }
 
 int   MUSIC_StopSong( void ) {
@@ -806,7 +803,7 @@ int   MUSIC_PlaySong( unsigned char *song, int song_len, int loopflag ) {
         printf("Mix_LoadMUS_RW: %s\n", SDL_GetError());
         abort();
     }
-    if (Mix_PlayMusic(sdl_music, loopflag) != 0) {
+    if (Mix_PlayMusic(sdl_music, loopflag? -1: 0) != 0) {
         printf("Mix_PlayMusic: %s\n", SDL_GetError());
         abort();
     }
