@@ -45,3 +45,5 @@ add_executable(rap
 )
 
 target_link_libraries(rap PRIVATE rapcore SDL2_mixer SDL2)
+
+install(TARGETS rap)
