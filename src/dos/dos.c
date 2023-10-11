@@ -848,12 +848,10 @@ static int FX_FindFreeHandle() {
             if (fx->buf) {
                 free(fx->buf);
             }
-            printf("Allocated channel handle %d\n", i);
             return i;
         }
     }
     int idx = candidates[rand() % candidates_n];
-    printf("no free channels, evicting one of %u candidate -> %d\n", candidates_n, idx);
     FX_StopSound(idx);
     return idx;
 }
@@ -861,8 +859,6 @@ static int FX_FindFreeHandle() {
 int FX_PlayRaw( char *ptr, unsigned long length, unsigned rate,
        int pitchoffset, int vol, int left, int right, int priority,
        unsigned long callbackval ) {
-    printf("FX_PlayRaw len: %lu rate: %u pitch: %d vol: %d left: %d right:%d prio: %d\n", 
-        length, rate, pitchoffset, vol, left, right, priority);
     int idx = FX_FindFreeHandle();
     if (idx < 0)
         return idx;
@@ -905,7 +901,6 @@ int FX_PlayRaw( char *ptr, unsigned long length, unsigned rate,
 }
 
 int FX_StopSound( int handle ) {
-    printf("FX_StopSound %d\n", handle);
     assert(handle < MAX_FX_HANDLES);
     struct fx_handle * fx = fx_handles + handle;
     if (!fx->chunk) {
