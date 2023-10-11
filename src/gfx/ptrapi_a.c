@@ -7,9 +7,6 @@ extern   BYTE *   displaybuffer;
 extern   BYTE *   displayscreen;
 extern   DWORD    cursorloopx;
 extern   DWORD    cursorloopy;
-extern   DWORD    joy_x;
-extern   DWORD    joy_y;
-extern   DWORD    joy_buttons;
 extern   BYTE *   cursorstart;
 extern   BYTE *   displaypic;
 extern   BYTE *   cursorsave;
@@ -118,9 +115,5 @@ VOID
         }
         dst += SCREENWIDTH - CURSORWIDTH;
     }
-}
-
-VOID PTR_ReadJoyStick (VOID) {
-    printf("PTR_ReadJoyStick\n");
 }
 

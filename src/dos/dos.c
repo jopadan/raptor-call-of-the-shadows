@@ -28,6 +28,11 @@ static SDL_Renderer * sdl_renderer = NULL;
 static SDL_Surface * sdl_surface = NULL;
 static SDL_Palette * sdl_palette = NULL;
 static Mix_Music * sdl_music = NULL;
+static SDL_Joystick * sdl_joystick = NULL;
+static int sdl_joystick_idx = -1;
+static bool sdl_joystick_hat = false;
+static bool sdl_joystick_axes = false;
+static int sdl_joystick_buttons = false;
 static int zoom = 4;
 static uint8_t palette[0x300];
 static bool palette_updated = FALSE;
@@ -479,6 +484,28 @@ void _dos_process_events() {
         case SDL_MOUSEBUTTONDOWN:
             callMouseHandler = true;
             break;
+        case SDL_JOYDEVICEADDED:
+            printf("Joystick added %d\n", event.jdevice.which);
+            if (sdl_joystick == NULL) {
+                sdl_joystick = SDL_JoystickOpen(event.jdevice.which);
+                if (sdl_joystick) {
+                    sdl_joystick_idx = event.jdevice.which;
+                    printf("Opened %s\n", SDL_JoystickName(sdl_joystick));
+                    sdl_joystick_hat = SDL_JoystickNumHats(sdl_joystick) >= 1;
+                    sdl_joystick_axes = SDL_JoystickNumAxes(sdl_joystick) >= 2;
+                    sdl_joystick_buttons = SDL_JoystickNumButtons(sdl_joystick);
+                    if (sdl_joystick_buttons > 4)
+                        sdl_joystick_buttons = 4;
+                }
+            }
+            break;
+        case SDL_JOYDEVICEREMOVED:
+            if (sdl_joystick_idx == event.jdevice.which) {
+                SDL_JoystickClose(sdl_joystick);
+                sdl_joystick = NULL;
+                sdl_joystick_idx = -1;
+            }
+            break;
         case SDL_QUIT:
             printf("Quit requested\n");
             EXIT_Clean();
@@ -553,6 +580,24 @@ void _dos_update_screen() {
     SDL_RenderPresent(sdl_renderer);
 }
 
+extern   DWORD    joy_x;
+extern   DWORD    joy_y;
+extern   DWORD    joy_buttons;
+
+VOID PTR_ReadJoyStick (VOID) {
+    _dos_process_events();
+    INT buttons = 0;
+    for(int i = 0; i < sdl_joystick_buttons; ++i) {
+        if (SDL_JoystickGetButton(sdl_joystick, i))
+            buttons |= 1 << i;
+    }
+    joy_buttons = buttons;
+    if (sdl_joystick_axes) {
+        joy_x = SDL_JoystickGetAxis(sdl_joystick, 0);
+        joy_y = SDL_JoystickGetAxis(sdl_joystick, 1);
+    }
+}
+
 int inp(unsigned short port) {
     switch(port)
     {
@@ -561,6 +606,15 @@ int inp(unsigned short port) {
         if (kbd_buffer_r == MAX_KEYS)
             kbd_buffer_r = 0;
         return code;
+    }
+    case 0x201: {
+        _dos_process_events();
+        uint8_t status = 0;
+        for(int i = 0; i < sdl_joystick_buttons; ++i) {
+            if (SDL_JoystickGetButton(sdl_joystick, i))
+                status |= 0x10 << i;
+        }
+        return 0xff ^ status;
     }
     case 0x3DA:
         retrace ^= 8;
