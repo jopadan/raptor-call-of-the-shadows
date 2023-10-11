@@ -1816,7 +1816,7 @@ INT handle                 // INPUT : handle of window
    windat = ( BYTE * )g_wins [ active_window ].win;
    curwin = ( SWIN * )windat;
 
-//   if ( windat )
+   if ( windat )
    {
    	  	curfld = ( SFIELD * ) ( windat + curwin->fldofs );
 
