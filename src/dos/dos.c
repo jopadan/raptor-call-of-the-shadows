@@ -188,16 +188,12 @@ int int386( int inter_no,
     return int386x(inter_no, in_regs, out_regs, NULL);
 }
 
-uint8_t _dos_keycode(uint8_t code, bool release) {
-    return code | (release? 0x80: 0x00);
-}
-
 void _dos_translate_key(SDL_Scancode code, bool release) {
     kbd_code_r = 0;
     kbd_code[0] = kbd_code[1] = 0;
     switch(code) {
     case SDL_SCANCODE_ESCAPE:
-        kbd_code[0] = _dos_keycode(1, release);
+        kbd_code[0] = 1;
         break;
     case SDL_SCANCODE_1:
     case SDL_SCANCODE_2:
@@ -209,12 +205,231 @@ void _dos_translate_key(SDL_Scancode code, bool release) {
     case SDL_SCANCODE_8:
     case SDL_SCANCODE_9:
     case SDL_SCANCODE_0:
-        kbd_code[0] = _dos_keycode(2 + code - SDL_SCANCODE_1, release);
+        kbd_code[0] = 2 + code - SDL_SCANCODE_1;
+        break;
+    case SDL_SCANCODE_MINUS:
+        kbd_code[0] = 0x0c;
+        break;
+    case SDL_SCANCODE_EQUALS:
+        kbd_code[0] = 0x0d;
+        break;
+    case SDL_SCANCODE_BACKSPACE:
+        kbd_code[0] = 0x0e;
+        break;
+    case SDL_SCANCODE_TAB:
+        kbd_code[0] = 0x0f;
+        break;
+    case SDL_SCANCODE_Q:
+        kbd_code[0] = 0x10;
+        break;
+    case SDL_SCANCODE_W:
+        kbd_code[0] = 0x11;
+        break;
+    case SDL_SCANCODE_E:
+        kbd_code[0] = 0x12;
+        break;
+    case SDL_SCANCODE_R:
+        kbd_code[0] = 0x13;
+        break;
+    case SDL_SCANCODE_T:
+        kbd_code[0] = 0x14;
+        break;
+    case SDL_SCANCODE_Y:
+        kbd_code[0] = 0x15;
+        break;
+    case SDL_SCANCODE_U:
+        kbd_code[0] = 0x16;
+        break;
+    case SDL_SCANCODE_I:
+        kbd_code[0] = 0x17;
+        break;
+    case SDL_SCANCODE_O:
+        kbd_code[0] = 0x18;
+        break;
+    case SDL_SCANCODE_P:
+        kbd_code[0] = 0x19;
+        break;
+    case SDL_SCANCODE_LEFTBRACKET:
+        kbd_code[0] = 0x1a;
+        break;
+    case SDL_SCANCODE_RIGHTBRACKET:
+        kbd_code[0] = 0x1b;
+        break;
+    case SDL_SCANCODE_RETURN:
+        kbd_code[0] = 0x1c;
+        break;
+    case SDL_SCANCODE_LCTRL:
+        kbd_code[0] = 0x1d;
+        break;
+    case SDL_SCANCODE_A:
+        kbd_code[0] = 0x1e;
+        break;
+    case SDL_SCANCODE_S:
+        kbd_code[0] = 0x1f;
+        break;
+    case SDL_SCANCODE_D:
+        kbd_code[0] = 0x20;
+        break;
+    case SDL_SCANCODE_F:
+        kbd_code[0] = 0x21;
+        break;
+    case SDL_SCANCODE_G:
+        kbd_code[0] = 0x22;
+        break;
+    case SDL_SCANCODE_H:
+        kbd_code[0] = 0x23;
+        break;
+    case SDL_SCANCODE_J:
+        kbd_code[0] = 0x24;
+        break;
+    case SDL_SCANCODE_K:
+        kbd_code[0] = 0x25;
+        break;
+    case SDL_SCANCODE_L:
+        kbd_code[0] = 0x26;
+        break;
+    case SDL_SCANCODE_SEMICOLON:
+        kbd_code[0] = 0x27;
+        break;
+    case SDL_SCANCODE_APOSTROPHE:
+        kbd_code[0] = 0x28;
+        break;
+    case SDL_SCANCODE_GRAVE:
+        kbd_code[0] = 0x29;
+        break;
+    case SDL_SCANCODE_LSHIFT:
+        kbd_code[0] = 0x2a;
+        break;
+    case SDL_SCANCODE_BACKSLASH:
+        kbd_code[0] = 0x2b;
+        break;
+    case SDL_SCANCODE_Z:
+        kbd_code[0] = 0x2c;
+        break;
+    case SDL_SCANCODE_X:
+        kbd_code[0] = 0x2d;
+        break;
+    case SDL_SCANCODE_C:
+        kbd_code[0] = 0x2e;
+        break;
+    case SDL_SCANCODE_V:
+        kbd_code[0] = 0x2f;
+        break;
+    case SDL_SCANCODE_B:
+        kbd_code[0] = 0x30;
+        break;
+    case SDL_SCANCODE_N:
+        kbd_code[0] = 0x31;
+        break;
+    case SDL_SCANCODE_M:
+        kbd_code[0] = 0x32;
+        break;
+    case SDL_SCANCODE_COMMA:
+        kbd_code[0] = 0x33;
+        break;
+    case SDL_SCANCODE_PERIOD:
+        kbd_code[0] = 0x34;
+        break;
+    case SDL_SCANCODE_SLASH:
+        kbd_code[0] = 0x35;
+        break;
+    case SDL_SCANCODE_RSHIFT:
+        kbd_code[0] = 0x36;
+        break;
+    case SDL_SCANCODE_KP_MULTIPLY:
+        kbd_code[0] = 0x37;
+        break;
+    case SDL_SCANCODE_LALT:
+        kbd_code[0] = 0x38;
+        break;
+    case SDL_SCANCODE_SPACE:
+        kbd_code[0] = 0x39;
+        break;
+    case SDL_SCANCODE_CAPSLOCK:
+        kbd_code[0] = 0x3a;
+        break;
+    case SDL_SCANCODE_F1:
+    case SDL_SCANCODE_F2:
+    case SDL_SCANCODE_F3:
+    case SDL_SCANCODE_F4:
+    case SDL_SCANCODE_F5:
+    case SDL_SCANCODE_F6:
+    case SDL_SCANCODE_F7:
+    case SDL_SCANCODE_F8:
+    case SDL_SCANCODE_F9:
+    case SDL_SCANCODE_F10:
+        kbd_code[0] = 0x3b + code - SDL_SCANCODE_F1;
+        break;
+    case SDL_SCANCODE_NUMLOCKCLEAR:
+        kbd_code[0] = 0x45;
+        break;
+    case SDL_SCANCODE_SCROLLLOCK:
+        kbd_code[0] = 0x46;
+        break;
+    case SDL_SCANCODE_KP_7:
+    case SDL_SCANCODE_HOME:
+        kbd_code[0] = 0x47;
+        break;
+    case SDL_SCANCODE_KP_8:
+    case SDL_SCANCODE_UP:
+        kbd_code[0] = 0x48;
+        break;
+    case SDL_SCANCODE_KP_9:
+    case SDL_SCANCODE_PAGEUP:
+        kbd_code[0] = 0x49;
+        break;
+    case SDL_SCANCODE_KP_MINUS:
+        kbd_code[0] = 0x4a;
+        break;
+    case SDL_SCANCODE_KP_4:
+    case SDL_SCANCODE_LEFT:
+        kbd_code[0] = 0x4b;
+        break;
+    case SDL_SCANCODE_KP_5:
+        kbd_code[0] = 0x4c;
+        break;
+    case SDL_SCANCODE_KP_6:
+    case SDL_SCANCODE_RIGHT:
+        kbd_code[0] = 0x4d;
+        break;
+    case SDL_SCANCODE_KP_PLUS:
+        kbd_code[0] = 0x4e;
+        break;
+    case SDL_SCANCODE_KP_1:
+    case SDL_SCANCODE_END:
+        kbd_code[0] = 0x4f;
+        break;
+    case SDL_SCANCODE_KP_2:
+    case SDL_SCANCODE_DOWN:
+        kbd_code[0] = 0x50;
+        break;
+    case SDL_SCANCODE_KP_3:
+    case SDL_SCANCODE_PAGEDOWN:
+        kbd_code[0] = 0x51;
+        break;
+    case SDL_SCANCODE_KP_0:
+    case SDL_SCANCODE_INSERT:
+        kbd_code[0] = 0x52;
+        break;
+    case SDL_SCANCODE_KP_PERIOD:
+    case SDL_SCANCODE_DELETE:
+        kbd_code[0] = 0x53;
+        break;
+    case SDL_SCANCODE_SYSREQ:
+        kbd_code[0] = 0x54;
+        break;
+    case SDL_SCANCODE_F11:
+        kbd_code[0] = 0x57;
+        break;
+    case SDL_SCANCODE_F12:
+        kbd_code[0] = 0x58;
         break;
     default:
         printf("KBD: missing scancode for %u\n", code);
         return;
     }
+    if (release)
+        kbd_code[0] ^= 0x80;
     if (int_handlers[9] != NULL)
         int_handlers[9]();
 }

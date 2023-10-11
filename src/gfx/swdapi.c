@@ -2087,6 +2087,7 @@ SWD_DLG * swd_dlg          // OUTPUT: pointer to info structure
    INT         loop;
    BOOL        update;
   
+   _dos_process_events();
    _disable();
    update = FALSE;
    g_key = KBD_LASTSCAN;
@@ -2414,6 +2415,7 @@ SWD_DLG * swd_dlg          // OUTPUT: pointer to info structure
   
    if ( update )
       GFX_DisplayUpdate();
+   _dos_update_screen();
 }
   
 /***************************************************************************
