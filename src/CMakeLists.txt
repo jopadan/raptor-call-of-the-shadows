@@ -1,6 +1,7 @@
 add_library(rapcore STATIC
     rap.c
     tile.c
+    tile_a.c
     shots.c
     eshot.c
     shadows.c

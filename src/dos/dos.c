@@ -659,23 +659,6 @@ void TS_Shutdown( void ) {
 void TS_Dispatch() {
 }
 
-
-// TILE
-
-VOID TILE_Draw ( VOID ) {
-    printf("TILE_Draw\n");
-}
-
-VOID TILE_ShakeScreen(VOID) {
-    printf("TILE_ShakeScreen\n");
-}
-VOID TILE_DisplayScreen(VOID) {
-    printf("TILE_DisplayScreen\n");
-}
-VOID TILE_ClipDraw ( VOID ) {
-    printf("TILE_ClipDraw\n");
-}
-
 //MUSIC
 
 int   MUSIC_Init( int SoundCard, int Address ) {
