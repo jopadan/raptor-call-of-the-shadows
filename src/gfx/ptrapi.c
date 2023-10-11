@@ -22,7 +22,7 @@
 #include <string.h>
 #include <dos.h>
 #include <conio.h>
-  
+
 #include "gfxapi.h"
 #include "ptrapi.h"
 #include "exitapi.h"
@@ -30,17 +30,17 @@
 #include "dpmiapi.h"
 #include "kbdapi.h"
 
-#define JOYADD        8  
+#define JOYADD        8
 #define CURSORHEIGHT  16
 #define CURSORWIDTH   16
 #define CURSORSIZE    (CURSORHEIGHT*CURSORWIDTH)
 #define HOTSPOTCOLOR  255
-  
+
 extern INT     ud_x;               // update x pos
 extern INT     ud_y;               // update y pos
 extern INT     ud_lx;              // update x length
 extern INT     ud_ly;              // update y length
-  
+
 #define MOUSE_MV  0x01  // Mouse movement occurred
 #define LB_PRESS  0x02  // Left button pressed
 #define LB_OFF    0x04  // Left button released
@@ -82,7 +82,7 @@ PRIVATE VOID   (*cursorhook)(VOID)           = (VOID (*))0;
 PRIVATE VOID   (*checkbounds)(VOID)          = (VOID (*))0;
 
 PUBLIC  BOOL   drawcursor     = FALSE;
-PRIVATE BOOL   g_paused       = FALSE;  
+PRIVATE BOOL   g_paused       = FALSE;
 PRIVATE BOOL   lastclip       = FALSE;
 PRIVATE DWORD  tsm_id         = EMPTY;
 PUBLIC  INT    joy_limit_xh   = 10;
@@ -130,15 +130,13 @@ VOID
 /*------------------------------------------------------------------------
    PTR_MouseHandler() - Mouse Handler Function
   ------------------------------------------------------------------------*/
-VOID _loadds _far  
+VOID _loadds _far
 PTR_MouseHandler(
 INT m_bx,
 INT m_cx,
 INT m_dx
 )
 {
-#pragma aux PTR_MouseHandler parm [EBX] [ECX] [EDX]
-  
    if ( not_in_update )
    {
       cur_mx = m_cx&0xffff;
@@ -279,7 +277,7 @@ VOID
 )
 {
    lastclip = FALSE;
-  
+
    displaypic = cursorpic;
 
    if ( ( dm_x + CURSORWIDTH ) > SCREENWIDTH )
@@ -298,7 +296,7 @@ VOID
       }
       else cursorloopx = CURSORWIDTH;
    }
-  
+
    if ( ( dm_y + CURSORHEIGHT ) > SCREENHEIGHT )
    {
       cursorloopy = SCREENHEIGHT - dm_y;
@@ -316,7 +314,7 @@ VOID
       else cursorloopy = CURSORHEIGHT;
    }
 }
-  
+
 /*========================================================================
   PTR_UpdateCursor() - Updates Mouse Cursor - should be called by intterupt
   ========================================================================*/
@@ -337,45 +335,45 @@ VOID
    {
       not_in_update = FALSE;
       mouseaction = FALSE;
-  
+
       if ( mouse_erase )
       {
          if ( lastclip ) PTR_ClipErase();
          else PTR_Erase();
-  
+
          mouse_erase = FALSE;
       }
-  
+
       if ( checkbounds )
          checkbounds();
 
       dm_x = cur_mx;
       dm_y = cur_my;
-  
+
       dm_x -= hot_mx;
       dm_y -= hot_my;
-  
+
       if ( drawcursor )
       {
          PTR_ClipCursor ();
-  
+
          cursorstart = displayscreen + dm_x + ylookup[dm_y] ;
-  
+
          PTR_Save();
          PTR_Draw();
-  
+
          mouse_erase = TRUE;
       }
-  
+
       if ( cursorhook )
          cursorhook();
-  
+
       cursorx = dm_x;
       cursory = dm_y;
       not_in_update = TRUE;
    }
 }
-  
+
 /*==========================================================================
   PTR_FrameHook() - Mouse framehook Function
  ==========================================================================*/
@@ -388,17 +386,17 @@ VOID (*update)(VOID)        // INPUT : pointer to function
    INT ck_y1;
    INT ck_x2;
    INT ck_y2;
-  
+
    if ( !drawcursor )
    {
       update();
       return;
    }
-  
+
    while ( !(volatile BOOL)not_in_update );
    not_in_update = FALSE;
    mouseonhold = TRUE;
-  
+
    if ( joyactive )
    {
       PTR_JoyHandler();
@@ -406,16 +404,16 @@ VOID (*update)(VOID)        // INPUT : pointer to function
 
    if ( checkbounds )
       checkbounds();
-  
+
    dm_x = cur_mx - hot_mx;
    dm_y = cur_my - hot_my;
    not_in_update = TRUE;
-  
+
    ck_x1 = ud_x - CURSORWIDTH;
    ck_y1 = ud_y - CURSORHEIGHT;
    ck_x2 = ud_x + ud_lx;
    ck_y2 = ud_y + ud_ly;
-  
+
    if ( dm_x >= ck_x1 && dm_x <= ck_x2 &&
       dm_y >= ck_y1 && dm_y <= ck_y2 )
    {
@@ -430,29 +428,29 @@ VOID (*update)(VOID)        // INPUT : pointer to function
          {
             if ( lastclip ) PTR_ClipErase();
             else PTR_Erase();
-  
+
             mouse_erase = FALSE;
          }
       }
-  
+
       PTR_ClipCursor ();
-  
+
       GFX_MarkUpdate ( dm_x, dm_y, cursorloopx, cursorloopy );
-  
+
       cursorstart = displaybuffer + dm_x + ylookup[ dm_y ];
-  
+
       if ( cursorloopy < CURSORHEIGHT )
          PTR_ClipSave();
       else
          PTR_Save();
 
       PTR_Draw();
-  
+
       update();
-  
+
       if ( lastclip ) PTR_ClipErase();
       else PTR_Erase();
-  
+
       cursorstart = displayscreen + dm_x + ylookup[ dm_y ];
       mouse_erase = TRUE;
    }
@@ -464,25 +462,25 @@ VOID (*update)(VOID)        // INPUT : pointer to function
          {
             if ( lastclip ) PTR_ClipErase();
             else PTR_Erase();
-  
+
             mouse_erase = FALSE;
          }
-  
+
          PTR_ClipCursor ();
-  
+
          cursorstart = displayscreen + dm_x + ylookup[ dm_y ];
-  
+
          PTR_Save();
          PTR_Draw();
-  
+
          mouse_erase = TRUE;
       }
       update();
    }
-  
+
    if ( cursorhook )
       cursorhook();
-  
+
    cursorx = dm_x;
    cursory = dm_y;
    mouseonhold = FALSE;
@@ -503,7 +501,7 @@ VOID
    joy_sx = joy_x;
    joy_sy = joy_y;
 }
-  
+
 /***************************************************************************
    PTR_DrawCursor () - Turns Cursor Drawing to ON/OFF ( TRUE/FALSE )
  ***************************************************************************/
@@ -523,14 +521,14 @@ BOOL  flag                 // INPUT: TRUE/FALSE
 
       if ( flag == TRUE )
          mouseaction = TRUE;
-  
+
       drawcursor = flag;
    }
    else
       drawcursor = FALSE;
 
 }
-  
+
 /***************************************************************************
    PTR_SetPic () - Sets up a new cursor picture with hotspot
  ***************************************************************************/
@@ -541,16 +539,16 @@ BYTE * newp                // INPUT : pointer to new Cursor picture
 {
    BYTE * pic;
    INT loop;
-  
+
    hot_mx = 0;
    hot_my = 0;
 
    if ( ptr_init_flag == FALSE ) return;
 
    newp += sizeof ( GFX_PIC );
-  
+
    pic = ( BYTE * )cursorpic;
-  
+
    for ( loop = 0; loop < CURSORSIZE; loop++, newp++, pic++ )
    {
       *pic = *newp;
@@ -561,7 +559,7 @@ BYTE * newp                // INPUT : pointer to new Cursor picture
          *pic = *( newp + 1 );
       }
    }
-  
+
    if ( hot_mx > 16 )
       hot_mx = 0;
 
@@ -570,7 +568,7 @@ BYTE * newp                // INPUT : pointer to new Cursor picture
 
    mouseaction = TRUE;
 }
-  
+
 /***************************************************************************
  PTR_SetBoundsHook() - Sets User function to OK or change mouse x,y values
  ***************************************************************************/
@@ -582,7 +580,7 @@ VOID (*func)(VOID)         // INPUT : pointer to function
    checkbounds = func;
    mouseaction = TRUE;
 }
-  
+
 /***************************************************************************
  PTR_SetCursorHook() - Sets User function to call from mouse handler
  ***************************************************************************/
@@ -594,7 +592,7 @@ VOID (*hook)(VOID)         // INPUT : pointer to function
    cursorhook = hook;
    mouseaction = TRUE;
 }
-  
+
 /***************************************************************************
    PTR_SetUpdateFlag () - Sets cursor to be update next cycle
  ***************************************************************************/
@@ -605,7 +603,7 @@ VOID
 {
    mouseaction = TRUE;
 }
-  
+
 /***************************************************************************
  PTR_SetPos() - Sets Cursor Position
  ***************************************************************************/
@@ -616,7 +614,7 @@ INT y                      // INPUT : y position
 )
 {
    union REGS   regs;
-  
+
    if ( mousepresent )
    {
       // Set Mouse Position ================
@@ -625,7 +623,7 @@ INT y                      // INPUT : y position
       regs.x.edx = y;
       int386(0x33,(const union REGS *) &regs, &regs);
    }
-  
+
    cur_mx = x;
    cur_my = y;
 
@@ -648,12 +646,12 @@ BOOL flag                  // INPUT : TRUE / FALSE
    if ( flag )
    {
       PTR_DrawCursor ( FALSE );
-      TSM_PauseService ( tsm_id );   
+      TSM_PauseService ( tsm_id );
    }
    else
    {
       drawcursor = FALSE;
-      TSM_ResumeService ( tsm_id );   
+      TSM_ResumeService ( tsm_id );
       PTR_SetPos ( 160, 100 );
       PTR_DrawCursor ( FALSE );
    }
@@ -683,7 +681,7 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
 
    if ( _dpmi_dosalloc ( 16, &segment ) ) EXIT_Error(err);
    cursorpic  = ( BYTE *)( segment<<4 );
-  
+
    joyactive = FALSE;
    mousepresent = FALSE;
 
@@ -695,13 +693,13 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
    }
 
    segread( &sregs );
-  
+
    if ( type == P_AUTO || type == P_MOUSE )
    {
       // Reset Mouse Driver ===================
       regs.w.ax = 0;
       int386(0x33, &regs, &regs);
-  
+
       if ( (SHORT)regs.w.ax == -1 )
       {
          mousepresent = TRUE;
@@ -709,7 +707,7 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
          // Hide Mouse ========================
          regs.w.ax = 2;
          int386(0x33, &regs, &regs);
- 
+
          // Install Mouse Handler==============
          function_ptr = PTR_MouseHandler;
          regs.w.ax = 0x0C;
@@ -719,7 +717,7 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
          int386x ( 0x33, &regs, &regs, &sregs );
       }
    }
-  
+
    if ( type == P_JOYSTICK )
    {
       if ( joy_present )
@@ -749,7 +747,7 @@ PTRTYPE type                  // INPUT : Pointer Type to Use
    else
       return ( FALSE );
 }
-  
+
 /***************************************************************************
  PTR_End() - End Cursor system
  ***************************************************************************/
@@ -759,12 +757,12 @@ VOID
 )
 {
    union REGS   regs;
-  
+
    if ( tsm_id != EMPTY )
 	   TSM_DelService( tsm_id );
 
    // reset to remove mouse handler ========
    regs.x.eax = 0x0;
    int386( 0x33, ( const union REGS * ) &regs, &regs );
-  
+
 }

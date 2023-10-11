@@ -1469,8 +1469,6 @@ main ( INT argc, CHAR * argv[] )
       JoyHack();
    }
 
-   printf ("main() = %u\n", main );
-
    RAP_InitLoadSave();
 
    if ( access ( RAP_SetupFilename(), 0 ) != 0 )

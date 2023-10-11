@@ -12,14 +12,14 @@
 * EXTERN MODULES - GFXAPI
 *
 *---------------------------------------------------------------------------*/
-  
+
 #ifndef _TYPES_H
 #include <types.h>
 #endif
-  
+
 #ifndef _TILEAPI
 #define _TILEAPI
-  
+
 typedef enum
 {
    TILE_NONE,
@@ -35,7 +35,7 @@ typedef struct
    INT      y;
    INT      mapspot;
 }TILESPOT;
- 
+
 typedef struct TDELAY_S
 {
    struct TDELAY_S * prev;
@@ -55,7 +55,7 @@ BYTE * inpic,              // INPUT : pointer to GFX_PIC ( norm )
 INT   x,                   // INPUT : x position
 INT   y                    // INPUT : y position
 );
-  
+
 /***************************************************************************
 TILE_Init () - Sets Up A level for Displaying
  ***************************************************************************/
@@ -87,7 +87,7 @@ VOID
 TILE_DamageAll (
 VOID
 );
-  
+
 /***************************************************************************
 TILE_Think () - Does Position Calculations for tiles
  ***************************************************************************/
@@ -95,7 +95,7 @@ VOID
 TILE_Think (
 VOID
 );
-  
+
 /***************************************************************************
 TILE_Display () - Displays Tiles
  ***************************************************************************/
@@ -103,7 +103,7 @@ VOID
 TILE_Display (
 VOID
 );
-  
+
 /***************************************************************************
 TILE_IsHit () - Checks to see if a shot hits an explodable tile
  ***************************************************************************/
@@ -123,7 +123,7 @@ INT damage,                // INPUT : damage to tile
 INT  x,                    // INOUT : x screen pos, out tile x
 INT  y                     // INOUT : y screen pos, out tile y
 );
-  
+
 /***************************************************************************
 TILE_Explode () - Sets the Tile to show explosion tile
  ***************************************************************************/
@@ -132,19 +132,12 @@ TILE_Explode (
 TILESPOT * ts,             // INPUT : tilespot of explosion
 INT delay                  // INPUT : frames to delay
 );
-  
-#pragma aux TILE_Draw "_*" modify [ EAX EBX ECX EDX ESI EDI ];
-VOID TILE_Draw ( VOID );
-  
-#pragma aux TILE_ClipDraw "_*" modify [ EAX EBX ECX EDX ESI EDI ];
-VOID TILE_ClipDraw ( VOID );
-  
-#pragma aux TILE_DisplayScreen "_*" modify [ EAX EBX ECX EDX ESI EDI ];
-VOID TILE_DisplayScreen ( VOID );
 
-#pragma aux TILE_ShakeScreen "_*" modify [ EAX EBX ECX EDX ESI EDI ];
+VOID TILE_Draw ( VOID );
+VOID TILE_ClipDraw ( VOID );
+VOID TILE_DisplayScreen ( VOID );
 VOID TILE_ShakeScreen ( VOID );
-  
+
 extern DWORD   startflat[4];
 extern INT     tilepos;
 extern INT     tileyoff;
