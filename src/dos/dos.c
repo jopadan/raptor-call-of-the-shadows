@@ -904,7 +904,6 @@ int FX_StopSound( int handle ) {
     assert(handle < MAX_FX_HANDLES);
     struct fx_handle * fx = fx_handles + handle;
     if (!fx->chunk) {
-        printf("No FX chunk\n");
         return -1;
     }
     Mix_FreeChunk(fx->chunk);
