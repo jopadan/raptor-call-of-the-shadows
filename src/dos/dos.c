@@ -938,14 +938,15 @@ static char * convert_path(const char *src) {
     return dst;
 }
 
-static char *resolve_path(const char *path) {
+static char *resolve_path(const char *path, bool create) {
     size_t p = 0;
     size_t n = strlen(path);
     char *dst = strdup(path);
     while(p < n)
     {
         const char *next_ptr = strchr(path + p, '\\');
-        size_t next = next_ptr? next_ptr - path: n;
+        bool lastComponent = next_ptr == NULL;
+        size_t next = lastComponent? n: next_ptr - path;
         if (next < n)
             dst[next] = 0;
         if (next > p) {
@@ -965,11 +966,11 @@ static char *resolve_path(const char *path) {
                         }
                     }
                     closedir(dir);
-                    if (!found) {
+                    if (!found && !create) {
                         free(dst);
                         return NULL;
                     }
-                } else {
+                } else if (!create) {
                     free(dst);
                     return NULL;
                 }
@@ -983,18 +984,18 @@ static char *resolve_path(const char *path) {
 }
 
 int _dos_open(const char *path, int mode) {
-    char *resolved = resolve_path(path);
+    char *resolved = resolve_path(path, mode & O_CREAT);
     if (!resolved) {
         errno = ENOENT;
         return -1;
     }
-    int r = open(resolved, mode);
+    int r = open(resolved, mode, 0755);
     free(resolved);
     return r;
 }
 
 int _dos_access(const char *path, int mode) {
-    char *resolved = resolve_path(path);
+    char *resolved = resolve_path(path, mode & O_CREAT);
     if (!resolved) {
         errno = ENOENT;
         return -1;
