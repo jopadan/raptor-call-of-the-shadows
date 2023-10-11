@@ -451,7 +451,7 @@ VOID
       switch ( shot->type )
       {
          case ES_LASER:
-            if ( shot->curframe < lib->num_frames)
+            if ( shot->curframe < lib->num_frames && shot->en && shot->en->lib)
             {
                shot->x        = shot->en->x + shot->en->lib->shootx [ shot->gun_num ] - 4;
                shot->y        = shot->en->y + shot->en->lib->shooty [ shot->gun_num ];
