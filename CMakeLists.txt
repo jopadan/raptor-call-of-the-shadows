@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(SDLRaptor)
+project(raptor)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
