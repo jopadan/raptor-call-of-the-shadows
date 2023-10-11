@@ -798,7 +798,7 @@ static int FX_FindFreeHandle() {
     int candidate_prio = -1;
     for(int i = 0; i < MAX_FX_HANDLES; ++i) {
         struct fx_handle *fx = fx_handles + i;
-        if (fx->chunk) {
+        if (fx->chunk && Mix_Playing(i)) {
             if (candidate_prio == -1 || fx->priority < candidate_prio) {
                 candidates_n = 0;
                 candidates[candidates_n++] = i;
@@ -807,6 +807,13 @@ static int FX_FindFreeHandle() {
                 candidates[candidates_n++] = i;
             }
         } else {
+            if (fx->chunk) {
+                Mix_FreeChunk(fx->chunk);
+                fx->chunk = NULL;
+            }
+            if (fx->buf) {
+                free(fx->buf);
+            }
             printf("Allocated channel handle %d\n", i);
             return i;
         }
