@@ -446,6 +446,9 @@ static void _dos_translate_key(SDL_Scancode code, bool release) {
         _dos_kdb_buffer_write(0xe0);
         _dos_kdb_buffer_write(0x38);
         break;
+    case SDL_SCANCODE_PAUSE:
+        _dos_kdb_buffer_write(0xe1);
+        break;
     default:
         printf("KBD: missing scancode for %u\n", code);
         return;
