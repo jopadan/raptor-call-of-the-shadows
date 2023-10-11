@@ -163,7 +163,7 @@ int int386x( int inter_no,
                     break;
                 case 0x04:
                     if (sdl_window)
-                        SDL_WarpMouseInWindow(sdl_window, in_regs->w.cx * zoom, in_regs->w.dx * zoom);
+                        SDL_WarpMouseInWindow(sdl_window, in_regs->w.cx * zoom / 2, in_regs->w.dx * zoom);
                     break;
                 case 0x0c: {
                     assert(sregs != NULL);
