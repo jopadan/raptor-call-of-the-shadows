@@ -47,6 +47,8 @@ VOID
 {
    INT rval = FALSE;
 
+   _dos_process_events();
+
    if ( mouse_b1_ack )
       rval = TRUE;
 
@@ -68,7 +70,9 @@ VOID
 )
 {
    BOOL ret_val = FALSE;
-  
+
+   _dos_process_events();
+
    if ( KBD_LASTSCAN )
    {
       KBD_LASTSCAN = FALSE;

@@ -435,7 +435,6 @@ void _dos_translate_key(SDL_Scancode code, bool release) {
 }
 
 void _dos_process_events() {
-    printf("_dos_process_events\n");
     SDL_Event event;
     bool callMouseHandler = true;
     while(SDL_PollEvent(&event)) {
@@ -467,8 +466,6 @@ void _dos_process_events() {
 }
 
 void _dos_update_screen() {
-    printf("_dos_update_screen\n");
-    _dos_process_events();
     if (!sdl_window)
         return;
 
