@@ -815,8 +815,8 @@ int   MUSIC_FadeVolume( int tovolume, int milliseconds ) {
         Mix_FadeOutMusic(milliseconds);
         return 0;
     }
-    printf("MUSIC_FadeVolume STUB %d %d\n", tovolume, milliseconds);
     MUSIC_SetVolume(tovolume);
+    Mix_FadeInMusic(sdl_music, 0, milliseconds);
     return 0;
 }
 
