@@ -13,6 +13,7 @@
 #include "pcfx.h"
 #include "fx_man.h"
 #include "music.h"
+#include "exitapi.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -480,7 +481,7 @@ void _dos_process_events() {
             break;
         case SDL_QUIT:
             printf("Quit requested\n");
-            exit(0);
+            EXIT_Clean();
             break;
         }
     }
