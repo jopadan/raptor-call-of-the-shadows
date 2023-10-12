@@ -574,14 +574,6 @@ void _dos_update_screen() {
     if (must_lock)
         SDL_UnlockSurface(sdl_surface);
 
-    SDL_Surface * window_surface = SDL_GetWindowSurface(sdl_window);
-    if (!window_surface) {
-        printf("SDL_GetWindowSurface: %s\n", SDL_GetError());
-        abort();
-    }
-
-    SDL_BlitSurface(sdl_surface, NULL, window_surface, NULL);
-
     SDL_RenderClear(sdl_renderer);
     SDL_Texture *tex = SDL_CreateTextureFromSurface(sdl_renderer, sdl_surface);
     if (!tex) {
