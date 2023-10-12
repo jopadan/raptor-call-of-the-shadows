@@ -288,11 +288,12 @@ INT   errcode
    if ( !errcode && !godmode )
       WIN_Order();
 
+   TSM_Remove();
+
    GLB_FreeAll();
 
    IPT_DeInit();
    DMX_DeInit();
-   TSM_Remove();
 
    GFX_EndSystem();
 
