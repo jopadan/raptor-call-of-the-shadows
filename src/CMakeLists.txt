@@ -19,7 +19,7 @@ add_library(rapcore STATIC
     help.c
     windows.c
     shadows.c
-
+ 
     gfx/exitapi.c
     gfx/imsapi.c
     gfx/glbapi.c

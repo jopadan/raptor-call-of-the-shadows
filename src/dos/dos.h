@@ -1,7 +1,6 @@
 #ifndef DOS_DOS_H__
 #define DOS_DOS_H__
 
-#include <string.h>
 #include <errno.h>
 #include <stdint.h>
 #include "task_man.h"
@@ -101,11 +100,13 @@ int outp(
    int data_byte
 );
 
-int chsize( int handle, long size );
-char * ltoa(long l, char * buffer, int radix);
+extern int _dos_open(const char *path, int mode, ...);
+extern int _dos_access(const char *path, int mode);
+extern int chsize( int handle, long size );
+extern char * ltoa(long l, char * buffer, int radix);
 
-void _dos_setvect(unsigned intnum, void (*handler)());
-void (*_dos_getvect(unsigned intnum))();
+extern void _dos_setvect(unsigned intnum, void (*handler)());
+extern void (*_dos_getvect(unsigned intnum))();
 
 extern uint8_t _dos_video_ram[];
 

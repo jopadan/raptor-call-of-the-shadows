@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dos.h>
-#include <fcntl.h>
 #include <malloc.h>
 #include <io.h>
 #include <sys/types.h>

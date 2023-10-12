@@ -1,5 +1,5 @@
 #include "dos.h"
-#include <fcntl.h>
+#include <io.h>
 #include <time.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include "types.h"
 #include "pcfx.h"
@@ -1067,13 +1068,21 @@ static char *resolve_path(const char *path, bool create) {
     return dst;
 }
 
-int _dos_open(const char *path, int mode) {
-    char *resolved = resolve_path(path, mode & O_CREAT);
+int _dos_open(const char *path, int mode, ...) {
+    bool create = mode & O_CREAT;
+    va_list args;
+    va_start(args, mode);
+    char *resolved = resolve_path(path, create);
     if (!resolved) {
         errno = ENOENT;
         return -1;
     }
-    int r = open(resolved, mode, 0755);
+    int r;
+    if (create) {
+        r = open(resolved, mode, va_arg(args, int));
+    } else {
+        r = open(resolved, mode);
+    }
     free(resolved);
     return r;
 }

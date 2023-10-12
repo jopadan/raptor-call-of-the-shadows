@@ -32,11 +32,9 @@
 #define REQ_HMEM   ( 128 * 1024 )
 #define REQ_LMEM   ( 500 * 1024 )
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dos.h>
-#include <fcntl.h>
 #include <conio.h>
 #include <io.h>
 #include <sys/types.h>
