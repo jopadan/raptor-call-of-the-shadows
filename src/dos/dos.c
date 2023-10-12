@@ -15,6 +15,7 @@
 #include "fx_man.h"
 #include "music.h"
 #include "exitapi.h"
+#include "prefapi.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -124,6 +125,8 @@ int int386x( int inter_no,
                 case 0x00:
                     printf("int 0x10: SetVideoMode 0x%02x\n", in_regs->h.al);
                     if (in_regs->h.al == 0x13) {
+                        short vsync = INI_GetPreferenceBool("Setup", "VSync", 0);
+                        zoom = INI_GetPreferenceLong("Setup", "Zoom", 4);
                         assert(sdl_window == NULL);
                         sdl_window = SDL_CreateWindow("RAPTOR: Call Of The Shadows V1.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320 * zoom, 200 * zoom, 0);
                         if (!sdl_window) {
@@ -131,7 +134,7 @@ int int386x( int inter_no,
                             abort();
                         }
                         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-                        sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+                        sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED | (vsync? SDL_RENDERER_PRESENTVSYNC: 0));
                         if (!sdl_renderer) {
                             printf("SDL_CreateRenderer: %s", SDL_GetError());
                             abort();
