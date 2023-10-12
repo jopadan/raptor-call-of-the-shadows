@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
-#include <malloc.h>
 #include <ctype.h>
   
 #include "dpmiapi.h"
@@ -240,6 +239,7 @@ BYTE * inmem
 /***************************************************************************
 SWD_FillText () - Fills Text from GLB intro an AREA
  ***************************************************************************/
+VOID
 SWD_FillText (
 FONT * font,               // INPUT : pointer to FONT
 DWORD item,                // INPUT : GLB text Item
@@ -585,7 +585,7 @@ SFIELD *curfld             // INPUT : pointer to current field
          {
             cur_act = S_WIN_COMMAND;
             cur_cmd = W_NEXT;
-            while ( (volatile) KBD_Key ( SC_TAB ) );
+            while ( (volatile BOOL) KBD_Key ( SC_TAB ) );
          }
          else
          {
@@ -657,7 +657,7 @@ SFIELD *curfld             // INPUT : pointer to current field
       case SC_TAB:
          if ( KBD_Key ( SC_ALT ) )
          {
-            while ( (volatile)KBD_Key ( SC_TAB ) );
+            while ( (volatile BOOL)KBD_Key ( SC_TAB ) );
             cur_act = S_WIN_COMMAND;
             cur_cmd = W_NEXT;
          }

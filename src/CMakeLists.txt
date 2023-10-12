@@ -1,3 +1,8 @@
+find_package(SDL2 REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+
+add_definitions( -Wall )
+
 add_library(rapcore STATIC
     rap.c
     tile.c
@@ -40,10 +45,18 @@ target_include_directories(rapcore PUBLIC dos gfx apodmx)
 target_compile_definitions(rapcore PUBLIC -D_loadds= -Dfar= -D_far= -D_interrupt= -D__cdecl= -Dcdecl= )
 target_compile_definitions(rapcore PRIVATE -Dstricmp=strcmpi -Dmain=_dos_main -Dopen=_dos_open -Daccess=_dos_access -Dfopen=_dos_fopen)
 
-add_executable(rap
+add_executable(rap MACOSX_BUNDLE
     dos/dos.c
 )
 
-target_link_libraries(rap PRIVATE rapcore SDL2_mixer SDL2)
+target_link_libraries(rap PRIVATE rapcore SDL2_mixer::SDL2_mixer SDL2::SDL2)
 
-install(TARGETS rap)
+set_target_properties(${CUR_TARGET} PROPERTIES
+    BUNDLE TRUE
+    MACOSX_BUNDLE_GUI_IDENTIFIER com.github.whoozle.raptor
+    MACOSX_BUNDLE_BUNDLE_NAME Raptor
+    MACOSX_BUNDLE_BUNDLE_VERSION "1.2"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "1.2"
+)
+
+install(TARGETS rap DESTINATION bin)

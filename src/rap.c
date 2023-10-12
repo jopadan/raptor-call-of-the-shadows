@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include <malloc.h>
 
 #include "raptor.h"
 #include "prefapi.h"

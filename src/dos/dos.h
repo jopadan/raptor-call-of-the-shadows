@@ -103,14 +103,16 @@ int outp(
 extern int _dos_open(const char *path, int mode, ...);
 extern int _dos_access(const char *path, int mode);
 extern int chsize( int handle, long size );
-extern char * ltoa(long l, char * buffer, int radix);
+long filelength(int fd);
 
 extern void _dos_setvect(unsigned intnum, void (*handler)());
 extern void (*_dos_getvect(unsigned intnum))();
 
 extern uint8_t _dos_video_ram[];
 
+char * strupr(char * str);
 int strcmpi(const char *, const char *);
+extern char * ltoa(long l, char * buffer, int radix);
 
 void _dos_process_events();
 void _dos_update_screen();

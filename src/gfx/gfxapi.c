@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <dos.h>
-#include <malloc.h>
 #include <string.h>
   
 #include "gfxapi.h"

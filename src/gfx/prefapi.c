@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <io.h>
+#include <dos.h>
 
 #include "prefapi.h"
 

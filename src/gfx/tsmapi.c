@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "task_man.h"
 #include "tsmapi.h"
+#include <string.h>
 
 typedef struct {
     task *t;

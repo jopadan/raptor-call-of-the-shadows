@@ -1,0 +1,36 @@
+name: "RAPTOR: Call Of The Shadow"
+
+on: [push]
+
+jobs:
+  MacOSX:
+    runs-on: macos-latest
+    steps:
+    - name: Install Dependencies...
+      run: |
+        brew tap homebrew/cask
+        brew install sdl2 sdl2_mixer ninja
+    - name: Checking out sources...
+      uses: actions/checkout@v2
+    - name: Configuring...
+      run: cmake -DCMAKE_OSX_DEPLOYMENT_TARGET=10.12 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=appdir -B build -G Ninja .
+    - name: Building...
+      run: ninja -j$(sysctl -n hw.ncpu) -C build
+    - name: Installing...
+      run: ninja -C build install
+    - name: Packaging...
+      run: |
+        mv appdir/bin/raptor.app appdir/bin/RaptorCallOfTheShadow.app
+        git clone https://github.com/andreyvit/create-dmg.git
+        cd create-dmg
+        ./create-dmg RAPTORCallOfTheShadow.dmg ../appdir/bin/RAPTORCallOfTheShadow.app
+    - name: Uploading Artifacts...
+      uses: ncipollo/release-action@v1
+      if: github.ref_name == 'master'
+      with:
+        allowUpdates: true
+        omitBody: true
+        omitName: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: create-dmg/*.dmg
+        tag: continuous
