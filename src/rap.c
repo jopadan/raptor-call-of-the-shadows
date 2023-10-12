@@ -1588,6 +1588,10 @@ main ( INT argc, CHAR * argv[] )
    if ( ! INI_InitPreference( RAP_SetupFilename() ) )
       EXIT_Error ("SETUP Error");
 
+   if (INI_GetPreferenceBool("Setup", "GodMode", 0)) {
+      godmode = TRUE;
+   }
+
    fflush ( stdout );
    TSM_Install ( 140 );
    KBD_Install();
