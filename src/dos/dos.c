@@ -127,8 +127,12 @@ int int386x( int inter_no,
                     if (in_regs->h.al == 0x13) {
                         short vsync = INI_GetPreferenceBool("Setup", "VSync", 0);
                         zoom = INI_GetPreferenceLong("Setup", "Zoom", 4);
+                        short fullscreen = INI_GetPreferenceBool("Setup", "Fullscreen", 0);
                         assert(sdl_window == NULL);
-                        sdl_window = SDL_CreateWindow("RAPTOR: Call Of The Shadows V1.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 320 * zoom, 200 * zoom, 0);
+                        sdl_window = SDL_CreateWindow("RAPTOR: Call Of The Shadows V1.2",
+                            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                            320 * zoom, 200 * zoom,
+                            fullscreen? SDL_WINDOW_FULLSCREEN_DESKTOP: 0);
                         if (!sdl_window) {
                             printf("SDL_CreateWindow: %s", SDL_GetError());
                             abort();
@@ -555,24 +559,28 @@ void _dos_update_screen() {
         }
         palette_updated = FALSE;
     }
-    bool must_lock = SDL_MUSTLOCK(sdl_surface);
-    if (must_lock) {
-        if (SDL_LockSurface(sdl_surface) != 0) {
-            printf("SDL_LockSurface: %s\n", SDL_GetError());
-            abort();
+
+    // Update sdl surface
+    {
+        bool must_lock = SDL_MUSTLOCK(sdl_surface);
+        if (must_lock) {
+            if (SDL_LockSurface(sdl_surface) != 0) {
+                printf("SDL_LockSurface: %s\n", SDL_GetError());
+                abort();
+            }
         }
+        BYTE *dst = (BYTE *)sdl_surface->pixels;
+        assert(dst);
+        const BYTE * src = _dos_video_ram;
+        int h = 200;
+        while(h--) {
+            memcpy(dst, src, 320);
+            dst += sdl_surface->pitch;
+            src += 320;
+        }
+        if (must_lock)
+            SDL_UnlockSurface(sdl_surface);
     }
-    BYTE *dst = (BYTE *)sdl_surface->pixels;
-    assert(dst);
-    const BYTE * src = _dos_video_ram;
-    int h = 200;
-    while(h--) {
-        memcpy(dst, src, 320);
-        dst += sdl_surface->pitch;
-        src += 320;
-    }
-    if (must_lock)
-        SDL_UnlockSurface(sdl_surface);
 
     SDL_RenderClear(sdl_renderer);
     SDL_Texture *tex = SDL_CreateTextureFromSurface(sdl_renderer, sdl_surface);
@@ -580,7 +588,16 @@ void _dos_update_screen() {
         printf("SDL_CreateTextureFromSurface: %s\n", SDL_GetError());
         abort();
     }
-    SDL_RenderCopy(sdl_renderer, tex, NULL, NULL);
+    int w, h;
+    SDL_GetRendererOutputSize(sdl_renderer, &w, &h);
+    int zx = w / 320, zy = h / 200;
+    int z = zx < zy? zx: zy;
+    SDL_Rect dst;
+    dst.w = 320 * z;
+    dst.h = 200 * z;
+    dst.x = (w - dst.w) / 2;
+    dst.y = (h - dst.h) / 2;
+    SDL_RenderCopy(sdl_renderer, tex, NULL, &dst);
     SDL_DestroyTexture(tex);
     SDL_RenderPresent(sdl_renderer);
 }
