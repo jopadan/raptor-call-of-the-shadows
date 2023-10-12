@@ -1728,8 +1728,12 @@ main ( INT argc, CHAR * argv[] )
 
    #ifdef TAIWAN_VERSION
       tai_flag = TRUE;
-      INTRO_Taiwan();
+   #else
+      tai_flag = INI_GetPreferenceBool("Setup", "TaiwanVersion", 0)? TRUE: FALSE;
    #endif
+
+   if (tai_flag)
+         INTRO_Taiwan();
 
    if ( !godmode )
       INTRO_Credits();
