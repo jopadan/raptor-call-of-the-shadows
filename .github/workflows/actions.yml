@@ -9,7 +9,7 @@ jobs:
     - name: Install Dependencies...
       run: |
         brew tap homebrew/cask
-        brew install sdl2 sdl2_mixer ninja
+        brew install sdl2 sdl2_mixer ninja findutils
     - name: Checking out sources...
       uses: actions/checkout@v2
     - name: Configuring...
@@ -20,6 +20,13 @@ jobs:
       run: ninja -C build install
     - name: Packaging...
       run: |
+        mkdir appdir/bin/rap.app/Contents/Frameworks
+        cp $(gfind /usr/local/Cellar/sdl2 -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/sdl2_mixer -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/portaudio -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/fluid-synth -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/libxmp -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        otool -L appdir/bin/rap.app/Contents/MacOS/rap
         mv appdir/bin/rap.app appdir/bin/RaptorCallOfTheShadow.app
         git clone https://github.com/andreyvit/create-dmg.git
         cd create-dmg

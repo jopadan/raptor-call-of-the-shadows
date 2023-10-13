@@ -1,6 +1,9 @@
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
+set(APP_BUNDLE_CONTENTS_DIR "${CMAKE_CURRENT_BINARY_DIR}/rap.app/Contents")
+set(APP_BUNDLE_FRAMEWORKS_DIR "${APP_BUNDLE_CONTENTS_DIR}/Frameworks")
+
 add_definitions( -Wall )
 
 add_library(rapcore STATIC
@@ -24,7 +27,7 @@ add_library(rapcore STATIC
     help.c
     windows.c
     shadows.c
- 
+
     gfx/exitapi.c
     gfx/imsapi.c
     gfx/glbapi.c
@@ -60,3 +63,10 @@ set_target_properties(${CUR_TARGET} PROPERTIES
 )
 
 install(TARGETS rap DESTINATION bin)
+
+if (APPLE)
+    add_custom_command(TARGET rap
+        POST_BUILD COMMAND
+        install_name_tool -add_rpath "@executable_path/../Frameworks/"
+        "${APP_BUNDLE_CONTENTS_DIR}/MacOS/rap")
+endif()
