@@ -635,6 +635,8 @@ VOID
    if ( control != I_JOYSTICK )
       return;
 
+#if 0
+
    printf ("\n");
 
    _disable();
@@ -670,6 +672,14 @@ VOID
    _enable();
    xh = joy_x;
    yh = joy_y;
+#endif
+
+   joy_sx = 0;
+   joy_sy = 0;
+   xl = -32768;
+   yl = -32768;
+   xh = 32767;
+   yh = 32767;
 
    if ( godmode )
    {
@@ -689,8 +699,10 @@ VOID
       printf ("CENTER sx = %d    sy = %d\n", joy_sx, joy_sy );
    }
 
+#if 0
    printf ("\n");
    fflush ( stdout );
+#endif
 }
 
 /***************************************************************************
