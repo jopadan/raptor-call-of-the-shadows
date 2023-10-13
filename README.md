@@ -49,4 +49,4 @@ You can turn on GodMode in original game by setting environment variable `SHOST`
 Another method would be to set `GodModel=0` to 1 in `setup.ini`. (Specific to this port).
 
 I wouldn't recommend cheating though, the game is way more interesting without it.
-One unexpected side effect of god mode is if you press ESC and abort current mission, the game counts it as a success.
+One unexpected side effect of god mode is if you press ESC and say NO, the game counts it as a success.
