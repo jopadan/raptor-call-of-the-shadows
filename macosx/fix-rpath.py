@@ -14,7 +14,7 @@ for exe in exes:
         if not lib:
             continue
         lib = lib.split()[0]
-        if not lib.startswith("/usr/local/opt/"):
+        if not lib.startswith("/usr/local/") and not lib.startswith("@loader_path/../../../../opt/"):
             continue
         name = lib.split("/")[-1]
         changes += ["-change", lib, "@executable_path/../Frameworks/" + name]

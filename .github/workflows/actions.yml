@@ -9,7 +9,7 @@ jobs:
     - name: Install Dependencies...
       run: |
         brew tap homebrew/cask
-        brew install sdl2 sdl2_mixer libvorbis ninja findutils
+        brew install sdl2 sdl2_mixer libvorbis libogg flac opus opusfile libsndfile mpg123 lame glib readline pcre2 gettext ninja findutils
     - name: Checking out sources...
       uses: actions/checkout@v2
     - name: Configuring...
@@ -27,6 +27,17 @@ jobs:
         cp $(gfind /usr/local/Cellar/fluid-synth -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
         cp $(gfind /usr/local/Cellar/libxmp -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
         cp $(gfind /usr/local/Cellar/libvorbis -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/libogg -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/flac -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/opus -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/opusfile -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/mpg123 -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/lame -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/glib -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/readline -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/gettext -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/libsndfile -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+        cp $(gfind /usr/local/Cellar/pcre2 -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
 
         python macosx/fix-rpath.py appdir/bin/rap.app/Contents/MacOS/rap
         python macosx/fix-rpath.py appdir/bin/rap.app/Contents/Frameworks/*.dylib
