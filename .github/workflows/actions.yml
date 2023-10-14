@@ -28,8 +28,11 @@ jobs:
         cp $(gfind /usr/local/Cellar/libxmp -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
         cp $(gfind /usr/local/Cellar/libvorbis -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
 
-        cd appdir/bin/rap.app/Contents/
-        otool -L MacOS/rap
+        echo "libvorbis?"
+        gfind /usr/local/Cellar/libvorbis
+
+        macosx/fix-rpath.py appdir/bin/rap.app/Contents/MacOS/rap
+        macosx/fix-rpath.py appdir/bin/rap.app/Contents/Frameworks/*.dylib
 
         mv appdir/bin/rap.app appdir/bin/RaptorCallOfTheShadow.app
         git clone https://github.com/andreyvit/create-dmg.git
