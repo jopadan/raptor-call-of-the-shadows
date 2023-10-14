@@ -26,7 +26,11 @@ jobs:
         cp $(gfind /usr/local/Cellar/portaudio -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
         cp $(gfind /usr/local/Cellar/fluid-synth -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
         cp $(gfind /usr/local/Cellar/libxmp -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
-        otool -L appdir/bin/rap.app/Contents/MacOS/rap
+        cp $(gfind /usr/local/Cellar/libvorbis -iname '*.dylib' | xargs) appdir/bin/rap.app/Contents/Frameworks/
+
+        cd appdir/bin/rap.app/Contents/
+        otool -L MacOS/rap
+
         mv appdir/bin/rap.app appdir/bin/RaptorCallOfTheShadow.app
         git clone https://github.com/andreyvit/create-dmg.git
         cd create-dmg
