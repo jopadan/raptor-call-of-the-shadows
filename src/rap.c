@@ -1739,7 +1739,7 @@ main ( INT argc, CHAR * argv[] )
    if (tai_flag)
          INTRO_Taiwan();
 
-   if ( !godmode )
+   if ( !godmode && !INI_GetPreferenceBool("Setup", "SkipCredits", 0))
       INTRO_Credits();
 
    if ( demo_flag != DEMO_PLAYBACK )
