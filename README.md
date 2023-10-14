@@ -1,5 +1,7 @@
 # RAPTOR: Call of the Shadows 1.2
 
+[![RAPTOR: Call Of The Shadow](https://github.com/whoozle/raptor-call-of-the-shadows/actions/workflows/actions.yml/badge.svg)](https://github.com/whoozle/raptor-call-of-the-shadows/actions/workflows/actions.yml)
+
 Port of RAPTOR: Call Of The Shadows to modern OSes using SDL2/SDL2_mixer
 
 This port is based on the original DOS source code found at
