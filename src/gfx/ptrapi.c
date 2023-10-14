@@ -393,7 +393,8 @@ VOID (*update)(VOID)        // INPUT : pointer to function
       return;
    }
 
-   while ( !(volatile BOOL)not_in_update );
+   // FIXME: causing deadlocks (and we don't really need it I believe)
+   // while ( !(volatile BOOL)not_in_update );
    not_in_update = FALSE;
    mouseonhold = TRUE;
 
