@@ -25,6 +25,7 @@
 #include "exitapi.h"
 #include "tsmapi.h"
 #include "dpmiapi.h"
+#include "prefapi.h"
   
 #define G3D_DIST 200
 
@@ -227,7 +228,9 @@ VOID
    _dpmi_lockregion( displaybuffer, 64000 );
    memset ( displaybuffer, 0, 64000 );
   
-	tsm_id = TSM_NewService( GFX_TimeFrameRate, 70, 255, 0 );
+   int frameRate = INI_GetPreferenceLong("Setup", "FrameRate", 70);
+   printf("Setting frame rate to %d\n", frameRate);
+   tsm_id = TSM_NewService( GFX_TimeFrameRate, frameRate, 255, 0 );
 
    for ( loop = 0; loop < SCREENHEIGHT; loop++ )
       ylookup[loop] = SCREENWIDTH * loop;
