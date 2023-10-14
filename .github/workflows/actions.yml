@@ -17,7 +17,9 @@ jobs:
     - name: Building...
       run: ninja -j$(sysctl -n hw.ncpu) -C build
     - name: Installing...
-      run: ninja -C build install
+      run: |
+        ninja -C build install
+        cp setup.ini appdir/bin/rap.app/Contents/MacOS/
     - name: Packaging...
       run: |
         mkdir appdir/bin/rap.app/Contents/Frameworks
