@@ -274,7 +274,7 @@ VOID
    game_wave [ 1 ] = plr.game_wave [ 1 ];
    game_wave [ 2 ] = plr.game_wave [ 2 ];
 
-   if ( !OBJS_IsEquip ( plr.sweapon ) )
+   if ( plr.sweapon != 0xffffffffu && !OBJS_IsEquip ( plr.sweapon ) )
    {
       OBJS_GetNext();
    }
