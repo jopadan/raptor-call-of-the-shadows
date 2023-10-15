@@ -181,11 +181,10 @@ int int386x( int inter_no,
                     if (sdl_window)
                         SDL_WarpMouseInWindow(sdl_window, in_regs->w.cx * zoom / 2, in_regs->w.dx * zoom);
                     break;
-                case 0x0c: {
+                case 0x0c:
                     assert(sregs != NULL);
                     mouse_handler = (VOID (*)(INT, INT, INT))FP_PTR(in_regs->x.edx, sregs->es);
                     break;
-                }
                 default:
                     printf("int 0x33: ax = %04x\n", in_regs->w.ax);
                     abort();
