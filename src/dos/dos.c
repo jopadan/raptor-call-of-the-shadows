@@ -790,7 +790,7 @@ int   MUSIC_Init( int SoundCard, int Address ) {
         printf("Mix_OpenAudio: %s\n", SDL_GetError());
         abort();
     }
-    long channels = INI_GetPreferenceLong("SoundFX", "Channels", 8);
+    long channels = INI_GetPreferenceLong("SoundFX", "MixChannels", 8);
     Mix_AllocateChannels(channels);
     return MUSIC_Ok;
 }
