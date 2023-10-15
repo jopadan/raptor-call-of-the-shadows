@@ -34,10 +34,14 @@ You can tweak `setup.ini` found in the binary directory of the game
 
 A few additional options are available in this port:
 
-- `TaiwanVersion=0` - set it to 1 and see Taiwanese version of this great game.
-- `Fullscreen=0` - set it to 1 to start game fullscreen by default
+- `Control=0` - set it to 2 to play with game pad.
+- `Fullscreen=0` - set it to 1 to start game in fullscreen by default.
 - `Zoom=4` - window zoom factor, original resolution is 320x200, so zoom=4 gives you 1280x800
-- `VSync=0` - Vsync, keep it off unless you know what are you doing, original game runs at 70Hz
+- `GodMode=0` - set it to 1 to start in god mode.
+- `SkipCredits=0` - set it to 1 to skip initial credits screen.
+- `FrameRate=70` - adjusts game frame rate, larger value makes game run faster.
+- `VSync=0` - Vsync, keep it off unless you know what are you doing, original game runs at 70Hz.
+- `TaiwanVersion=0` - set it to 1 and see Taiwanese version of this great game.
 
 # Gamepad support
 
