@@ -774,6 +774,10 @@ void TS_Dispatch() {
 
 int   MUSIC_Init( int SoundCard, int Address ) {
     printf("MUSIC_Init %d %d\n", SoundCard, Address);
+    SDL_SetHint("SDL_NATIVE_MUSIC", "1");
+    SDL_SetHint("SDL_MIXER_DEBUG_MUSIC_INTERFACES", "1");
+    SDL_SetHint("SDL_MIXER_DISABLE_TIMIDITY", "1");
+    SDL_SetHint("SDL_MIXER_DISABLE_FLUIDSYNTH", "1");
     int r = Mix_Init(MIX_INIT_MID);
     printf("MIX_Init: %08x\n", r);
     if (Mix_OpenAudio(GAME_MIX_FREQ, GAME_MIX_FORMAT, MIX_DEFAULT_CHANNELS, 16)) {
