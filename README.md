@@ -43,6 +43,15 @@ A few additional options are available in this port:
 - `VSync=0` - Vsync, keep it off unless you know what are you doing, original game runs at 70Hz.
 - `TaiwanVersion=0` - set it to 1 and see Taiwanese version of this great game.
 
+# Music on MacOSX
+
+To play original music you will need a sound font in sf2 format.
+
+Free sound font could be downloaded from:
+https://member.keymusician.com/Member/FluidR3_GM/index.html
+
+Unpack it to the directory with your game files, then adjust setup.ini as needed. 
+
 # Gamepad support
 
 Unfortunately it's not found anywhere in options, however you can turn it on by setting `Control=0` to `Control=2`.
