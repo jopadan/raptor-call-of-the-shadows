@@ -77,7 +77,6 @@ PRIVATE INT    hot_my         = 0;
 PRIVATE BOOL   mouseonhold    = FALSE;
 PRIVATE BOOL   mouseaction    = TRUE;
 PRIVATE BOOL   mouse_erase    = FALSE;
-PRIVATE BOOL   not_in_update  = TRUE;
 PRIVATE VOID   (*cursorhook)(VOID)           = (VOID (*))0;
 PRIVATE VOID   (*checkbounds)(VOID)          = (VOID (*))0;
 
@@ -137,22 +136,19 @@ INT m_cx,
 INT m_dx
 )
 {
-   if ( not_in_update )
-   {
-      cur_mx = m_cx&0xffff;
-      cur_mx = cur_mx>>1;
-      cur_my = m_dx;
-      mouseb1 = m_bx & 1;
-      mouseb2 = m_bx & 2;
-      mouseb3 = m_bx & 4;
-      mouseaction = TRUE;
-      if ( mouseb1 )
-         mouse_b1_ack = TRUE;
-      if ( mouseb2 )
-         mouse_b2_ack = TRUE;
-      if ( mouseb3 )
-         mouse_b3_ack = TRUE;
-   }
+   cur_mx = m_cx&0xffff;
+   cur_mx = cur_mx>>1;
+   cur_my = m_dx;
+   mouseb1 = m_bx & 1;
+   mouseb2 = m_bx & 2;
+   mouseb3 = m_bx & 4;
+   mouseaction = TRUE;
+   if ( mouseb1 )
+      mouse_b1_ack = TRUE;
+   if ( mouseb2 )
+      mouse_b2_ack = TRUE;
+   if ( mouseb3 )
+      mouse_b3_ack = TRUE;
 }
 
 VOID
@@ -333,7 +329,6 @@ VOID
 
    if ( mouseaction )
    {
-      not_in_update = FALSE;
       mouseaction = FALSE;
 
       if ( mouse_erase )
@@ -370,7 +365,6 @@ VOID
 
       cursorx = dm_x;
       cursory = dm_y;
-      not_in_update = TRUE;
    }
 }
 
@@ -393,9 +387,6 @@ VOID (*update)(VOID)        // INPUT : pointer to function
       return;
    }
 
-   // FIXME: causing deadlocks (and we don't really need it I believe)
-   // while ( !(volatile BOOL)not_in_update );
-   not_in_update = FALSE;
    mouseonhold = TRUE;
 
    if ( joyactive )
@@ -408,7 +399,6 @@ VOID (*update)(VOID)        // INPUT : pointer to function
 
    dm_x = cur_mx - hot_mx;
    dm_y = cur_my - hot_my;
-   not_in_update = TRUE;
 
    ck_x1 = ud_x - CURSORWIDTH;
    ck_y1 = ud_y - CURSORHEIGHT;
