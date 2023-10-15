@@ -3,6 +3,7 @@
 #include <string.h>
 #include <io.h>
 #include <dos.h>
+#include <ctype.h>
 
 #include "prefapi.h"
 
@@ -65,6 +66,11 @@ GetPrivateProfileString(
                     {
                         strncpy( buf, token, buflen );
                         buf[buflen-1] = '\0';
+                        int n = strlen(buf);
+                        while(n > 0 && isspace(buf[n - 1])) {
+                            buf[n - 1] = '\0';
+                            --n;
+                        }
                     }
                     else
                         buf[0] = '\0';
