@@ -535,7 +535,17 @@ void _dos_process_events() {
             ((buttons & SDL_BUTTON_LMASK)? 1: 0) |
             ((buttons & SDL_BUTTON_RMASK)? 2: 0) |
             ((buttons & SDL_BUTTON_MMASK)? 4: 0);
-        mouse_handler(dos_buttons, x * 2 / zoom, y / zoom);
+        x = x * 2 / zoom;
+        y /= zoom;
+        if (x < 0)
+            x = 0;
+        else if (x > 640)
+            x = 640;
+        if (y < 0)
+            y = 0;
+        else if (y > 200)
+            y = 200;
+        mouse_handler(dos_buttons, x, y);
     }
 }
 
