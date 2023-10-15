@@ -37,6 +37,7 @@ PRIVATE INT g_addx  = 0;
 PRIVATE INT g_addy  = 0;
 PRIVATE INT xm;
 PRIVATE INT ym;
+PRIVATE INT mouse_speed_x = 10, mouse_speed_y = 10;
 PRIVATE INT tsm_id;
 
 extern  INT joy_x;
@@ -548,10 +549,10 @@ VOID
   
       if ( xm == 0 )
          xm = 1;
-      else if ( xm > 10 )
-         xm = 10;
-      else if ( xm < -10 )
-         xm = -10;
+      else if ( xm > mouse_speed_x )
+         xm = mouse_speed_x;
+      else if ( xm < -mouse_speed_x )
+         xm = -mouse_speed_x;
    }
 
    if ( ym != 0 )
@@ -560,10 +561,10 @@ VOID
   
       if ( ym == 0 )
          ym = 1;
-      else if ( ym > 10 )
-         ym = 10;
-      else if ( ym < -10 )
-         ym = -10;
+      else if ( ym > mouse_speed_y )
+         ym = mouse_speed_y;
+      else if ( ym < -mouse_speed_y )
+         ym = -mouse_speed_y;
    }
 
    g_addx = xm;
@@ -713,6 +714,9 @@ IPT_Init (
 VOID
 )
 {
+   mouse_speed_x = INI_GetPreferenceLong("Mouse", "SpeedX", 10);
+   mouse_speed_y = INI_GetPreferenceLong("Mouse", "SpeedY", 10);
+   printf("Mouse speed set to %dx%d\n", mouse_speed_x, mouse_speed_y);
    tsm_id = TSM_NewService( IPT_GetButtons, 26, 254, 1 );
    IPT_CalJoy();
 }
