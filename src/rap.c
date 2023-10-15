@@ -1456,6 +1456,12 @@ main ( INT argc, CHAR * argv[] )
    CHAR emptyString[] = {0};
    if (!var1)
       var1 = emptyString;
+   printf("exe path: %s\n", argv[0]);
+   {
+      char cwd[1024];
+      getcwd(cwd, sizeof(cwd));
+      printf("cwd: %s\n", cwd);
+   }
 
    if ( argc >= 0 )
       InitScreen();
